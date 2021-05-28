@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Nemesys.Models
+namespace Nemesys.ViewModels
 {
-    public class Reporter
+    public class ReportViewModel
     {
     }
 }
