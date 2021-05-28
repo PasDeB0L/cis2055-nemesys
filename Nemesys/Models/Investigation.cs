@@ -7,5 +7,10 @@ namespace Nemesys.Models
 {
     public class Investigation
     {
+        public int Id { get; set; }
+        public int  ReportId { get; set; }
+        public string DescriptionOfInvestigation { get; set; }
+        public string InvestigatorDetails { get; set; }
+        public DateTime DateOfAction { get; set; }
     }
 }

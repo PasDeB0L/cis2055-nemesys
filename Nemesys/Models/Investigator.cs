@@ -7,5 +7,7 @@ namespace Nemesys.Models
 {
     public class Investigator
     {
+        
+            
     }
 }
