@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Nemesys.ViewModels
 {
-    public class TypeOfHasardViewModel : Controller
+    public class TypeOfHasardViewModel 
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }

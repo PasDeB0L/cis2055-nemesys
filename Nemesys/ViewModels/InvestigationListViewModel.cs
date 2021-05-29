@@ -8,6 +8,6 @@ namespace Nemesys.ViewModels
     public class InvestigationListViewModel
     {
         public int TotalEntries { get; set; }
-        public IEnumerable<InvestigationViewModel> BlogPosts { get; set; }
+        public IEnumerable<InvestigationViewModel> Investigations { get; set; }
     }
 }

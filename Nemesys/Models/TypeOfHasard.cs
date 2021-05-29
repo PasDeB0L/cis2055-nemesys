@@ -6,11 +6,15 @@ using System.Threading.Tasks;
 
 namespace Nemesys.Models
 {
-    public class TypeOfHasard : Controller
+    public class TypeOfHasard 
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public int Id { get; set; }
+        public string Name { get; set; }
+
+        //Collection navigation property
+        public List<Report> Reports { get; set; }
+
+        //Collection navigation property
+        public List<Investigation> Investigations { get; set; }
     }
 }

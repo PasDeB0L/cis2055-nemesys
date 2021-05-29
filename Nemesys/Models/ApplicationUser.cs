@@ -13,4 +13,5 @@ namespace Nemesys.Models
         public string AuthorAlias { get; set; }
 
     }
+
 }

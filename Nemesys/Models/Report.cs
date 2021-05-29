@@ -33,5 +33,10 @@ namespace Nemesys.Models
 
         public Boolean Investigation {get; set;}
 
+
+        //Foreign Key - navigation property name + key property name
+        public string UserId { get; set; }
+        public ApplicationUser User { get; set; }
+
     }
 }

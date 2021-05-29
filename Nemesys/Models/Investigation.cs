@@ -11,6 +11,7 @@ namespace Nemesys.Models
         public int  ReportId { get; set; }
         public string DescriptionOfInvestigation { get; set; }
         public string InvestigatorDetails { get; set; }
+        public ApplicationUser User { get; set; }
         public DateTime DateOfAction { get; set; }
     }
 }

@@ -6,11 +6,9 @@ using System.Threading.Tasks;
 
 namespace Nemesys.ViewModels
 {
-    public class StatusViewModel : Controller
+    public class StatusViewModel 
     {
-        public IActionResult Index()
-        {
-            return View();
-        }
+        public int Id { get; set; }
+        public string Name { get; set; }
     }
 }
