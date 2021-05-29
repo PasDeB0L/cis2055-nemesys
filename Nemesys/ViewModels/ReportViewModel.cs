@@ -7,5 +7,7 @@ namespace Nemesys.ViewModels
 {
     public class ReportViewModel
     {
+        
+            
     }
 }
