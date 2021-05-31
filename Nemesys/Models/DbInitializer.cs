@@ -8,7 +8,7 @@ namespace Nemesys.Models
 {
     public class DbInitializer
     {
-        public static void Initialize(UserManager<ApplicationUser> userManager, AppDbContext context)
+        public static void Initialize( AppDbContext context) //UserManager<ApplicationUser> userManager,
         {
             if (!context.Status.Any())
             {
