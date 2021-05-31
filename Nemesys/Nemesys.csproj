@@ -4,11 +4,6 @@
     <TargetFramework>net5.0</TargetFramework>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Models\Interfaces\" />
-    <Folder Include="Models\Repositories\" />
-  </ItemGroup>
-
   <ProjectExtensions><VisualStudio><UserProperties appsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
 
 </Project>
