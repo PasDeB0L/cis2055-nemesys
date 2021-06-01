@@ -8,7 +8,7 @@ namespace Nemesys.Models
 {
     public class DbInitializer
     {
-        public static void Initialize( AppDbContext context) //UserManager<ApplicationUser> userManager,
+        public static void SeedData( AppDbContext context) //UserManager<ApplicationUser> userManager,
         {
             if (!context.Status.Any())
             {
@@ -50,47 +50,49 @@ namespace Nemesys.Models
                 context.SaveChanges();
             }
 
-
+ 
             if (!context.Reports.Any())
             {
                 //Grabbing first one
-                var user = userManager.GetUsersInRoleAsync("User").Result.FirstOrDefault();
+                // var user = userManager.GetUsersInRoleAsync("User").Result.FirstOrDefault();
 
                 context.AddRange
                 (
                     new Report()
                     {
-                        Title = "AGA Today",
-                        Content = "Today's AGA is characterized by a series of discussions and debates around ...",
-                        CreatedDate = DateTime.UtcNow,
-                        UpdatedDate = DateTime.UtcNow,
+                        Id = 1,
+                        Upvotes = 3,
+                        TypeOfHasardId = 1,
+                        DetailsOnTheReporter = "IDuser1, charlessaison@hotmail.fr, 0607783252",
                         ImageUrl = "/images/seed1.jpg",
-                        CategoryId = 1,
-                        UserId = user.Id
+                        StatusId = 1,
+                        Description = "water problem",
+                        Location = "Toilet",
+                        DateOfReport = new DateTime(2021,9,12),
+                        DateAndTime = new DateTime(2021, 9, 6),
+                        Investigation = false,
+                        UserId = 1
                     },
                     new Report()
                     {
-                        Title = "Traffic is incredible",
-                        Content = "Today's traffic can't be described using words. Only an image can do that ...",
-                        CreatedDate = DateTime.UtcNow.AddDays(-1),
-                        UpdatedDate = DateTime.UtcNow.AddDays(-1),
+                        Id = 2,
+                        Upvotes = 0,
+                        TypeOfHasardId = 2,
+                        DetailsOnTheReporter = "IDuser1, charlessaison@hotmail.fr, 0607783252",
                         ImageUrl = "/images/seed2.jpg",
-                        CategoryId = 2,
-                        UserId = user.Id
-                    },
-                    new Report()
-                    {
-                        Title = "When is Spring really starting?",
-                        Content = "Clouds clouds all around us. I thought spring started already, but ...",
-                        CreatedDate = DateTime.UtcNow.AddDays(-2),
-                        UpdatedDate = DateTime.UtcNow.AddDays(-2),
-                        ImageUrl = "/images/seed3.jpg",
-                        CategoryId = 2,
-                        UserId = user.Id
+                        StatusId = 2,
+                        Description = "ELECTRICAL PB",
+                        Location = "GYM",
+                        DateOfReport = new DateTime(2021, 7, 23),
+                        DateAndTime = new DateTime(2021, 7,22),
+                        Investigation = false,
+                        UserId = 1
                     }
-                );
+                ); ; ;
                 context.SaveChanges();
+            
             }
+            
         }
         }
 }

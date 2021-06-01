@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
 using Nemesys.Models;
 
-
 namespace Nemesys
 {
     public class Program
@@ -18,12 +17,36 @@ namespace Nemesys
         {
             var host = CreateHostBuilder(args).Build();
 
-            CreateDbIfNotExists(host);
+            using (var scope = host.Services.CreateScope())
+            {
+                var services = scope.ServiceProvider;
+                try
+                {
+                    var context = services.GetRequiredService<AppDbContext>();
+                    /*
+                     * when USER will be on the project
+                    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
+                    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
+                   
+                    DbInitializer.SeedRoles(roleManager);
+                    DbInitializer.SeedUsers(userManager);
+                    DbInitializer.SeedData(userManager, context);
+                    */
+
+
+                    DbInitializer.SeedData(context);
+                }
+                catch (Exception ex)
+                {
+                    var logger = services.GetRequiredService<ILogger<Program>>();
+                    logger.LogError(ex, "An error occurred while seeding the database.");
+                }
+            }
 
             host.Run();
         }
 
-        
+
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
@@ -54,7 +77,7 @@ namespace Nemesys
                 try
                 {
                     var context = services.GetRequiredService<AppDbContext>();
-                    DbInitializer.Initialize(context);
+                    DbInitializer.SeedData(context);
                 }
                 catch (Exception ex)
                 {

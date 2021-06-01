@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Nemesys.Models
 {
-    public class AppDbContext : IdentityDbContext<ApplicationUser>
+    public class AppDbContext : DbContext //: IdentityDbContext<ApplicationUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -19,13 +19,14 @@ namespace Nemesys.Models
         public DbSet<Report> Reports { get; set; }
         public DbSet<TypeOfHasard> TypeOfHasard { get; set; }
         public DbSet<Investigation> Investigations { get; set; }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            modelBuilder.Entity<Status>().ToTable("Status");
-            modelBuilder.Entity<Investigation>().ToTable("Investigations");
-            modelBuilder.Entity<Report>().ToTable("Reports");
-            modelBuilder.Entity<TypeOfHasard>().ToTable("TypeOfHasard");
-        }
+       
+        /*
+                protected override void OnModelCreating(ModelBuilder modelBuilder)
+                {
+                    modelBuilder.Entity<Status>().ToTable("Status");
+                    modelBuilder.Entity<Investigation>().ToTable("Investigations");
+                    modelBuilder.Entity<Report>().ToTable("Reports");
+                    modelBuilder.Entity<TypeOfHasard>().ToTable("TypeOfHasard");
+                }*/
     }
 }
