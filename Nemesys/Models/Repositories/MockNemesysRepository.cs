@@ -148,7 +148,7 @@ namespace Nemesys.Models.Repositories
                 existingReport.DateOfReport = report.DateOfReport;
                 existingReport.DateAndTime = report.DateAndTime;
                 existingReport.Investigation = report.Investigation;
-                existingReport.UserId = report.UserId;
+                existingReport.User = report.User;
             }           
         }
 

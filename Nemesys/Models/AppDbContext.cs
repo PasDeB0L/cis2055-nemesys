@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Nemesys.Models
 {
-    public class AppDbContext : DbContext //: IdentityDbContext<ApplicationUser>
+    public class AppDbContext : IdentityDbContext<ApplicationUser>
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {

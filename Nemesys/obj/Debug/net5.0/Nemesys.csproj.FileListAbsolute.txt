@@ -38,9 +38,6 @@ C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\ref\Nemesys.dll
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Nemesys.pdb
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Nemesys.genruntimeconfig.cache
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Nemesys.csproj.CopyComplete
-C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Create.cshtml.g.cs
-C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Edit.cshtml.g.cs
-C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Index.cshtml.g.cs
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\Home\About.cshtml.g.cs
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\Microsoft.AspNetCore.Cryptography.Internal.dll
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
@@ -154,6 +151,9 @@ C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\zh-Hans\Microso
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\runtimes\win-arm\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\runtimes\win-arm64\lib\net5.0\dotnet-aspnet-codegenerator-design.exe
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPostXXX\Create.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPostXXX\Edit.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPostXXX\Index.cshtml.g.cs
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\Reports\Create.cshtml.g.cs
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\Reports\Delete.cshtml.g.cs
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\Reports\Details.cshtml.g.cs

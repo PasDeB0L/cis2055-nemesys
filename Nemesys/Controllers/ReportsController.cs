@@ -51,7 +51,7 @@ namespace Nemesys.Controllers
         {
             ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id");
             ViewData["TypeOfHasardId"] = new SelectList(_context.TypeOfHasard, "Id", "Id");
-            ViewData["UserId"] = new SelectList(_context.Set<ApplicationUser>(), "Id", "Id");
+            
             return View();
         }
 
@@ -60,7 +60,7 @@ namespace Nemesys.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Upvotes,TypeOfHasardId,DetailsOnTheReporter,StatusId,ImageUrl,Description,Location,DateOfReport,DateAndTime,Investigation,UserId")] Report report)
+        public async Task<IActionResult> Create([Bind("Id,Upvotes,TypeOfHasardId,DetailsOnTheReporter,StatusId,ImageUrl,Description,Location,DateOfReport,DateAndTime,Investigation")] Report report)
         {
             if (ModelState.IsValid)
             {
@@ -70,7 +70,7 @@ namespace Nemesys.Controllers
             }
             ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", report.StatusId);
             ViewData["TypeOfHasardId"] = new SelectList(_context.TypeOfHasard, "Id", "Id", report.TypeOfHasardId);
-            ViewData["UserId"] = new SelectList(_context.Set<ApplicationUser>(), "Id", "Id", report.UserId);
+            
             return View(report);
         }
 
@@ -89,7 +89,7 @@ namespace Nemesys.Controllers
             }
             ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", report.StatusId);
             ViewData["TypeOfHasardId"] = new SelectList(_context.TypeOfHasard, "Id", "Id", report.TypeOfHasardId);
-            ViewData["UserId"] = new SelectList(_context.Set<ApplicationUser>(), "Id", "Id", report.UserId);
+            
             return View(report);
         }
 
@@ -127,7 +127,7 @@ namespace Nemesys.Controllers
             }
             ViewData["StatusId"] = new SelectList(_context.Status, "Id", "Id", report.StatusId);
             ViewData["TypeOfHasardId"] = new SelectList(_context.TypeOfHasard, "Id", "Id", report.TypeOfHasardId);
-            ViewData["UserId"] = new SelectList(_context.Set<ApplicationUser>(), "Id", "Id", report.UserId);
+            
             return View(report);
         }
 

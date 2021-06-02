@@ -13,19 +13,19 @@ namespace Nemesys.Models
         public int Upvotes { get; set; }
 
         public int TypeOfHasardId { get; set; }
-
         public TypeOfHasard TypeOfHasard { get; set; }
+
         public string DetailsOnTheReporter { get; set; }
         public int StatusId { get; set; }
         public Status Status { get; set; }
         public string ImageUrl { get; set; }
 
 
-        [StringLength(60, MinimumLength = 10)]
+        [StringLength(60, MinimumLength = 1)]
         [Required]
         public string Description { get; set; }
 
-        [StringLength(60, MinimumLength = 4)]
+        [StringLength(60, MinimumLength = 1)]
         [Required]
         public string Location { get; set; }
 
@@ -38,8 +38,11 @@ namespace Nemesys.Models
 
 
         //Foreign Key - navigation property name + key property name
-        public int UserId { get; set; }
+        
+        public string UserId { get; set; }
+        
         public ApplicationUser User { get; set; }
+        
 
     }
 }
