@@ -156,3 +156,4 @@ C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\Mov
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\Movies\Details.cshtml.g.cs
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\Movies\Edit.cshtml.g.cs
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\Movies\Index.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Nemesys.MvcApplicationPartsAssemblyInfo.cs
