@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using Nemesys.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using Testdb.Models;
 
-namespace Nemesys.Controllers
+namespace Testdb.Controllers
 {
     public class HomeController : Controller
     {
@@ -28,11 +28,10 @@ namespace Nemesys.Controllers
             return View();
         }
 
-        public IActionResult About()
+        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+        public IActionResult Error()
         {
-            return View();
+            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
-
-        
     }
 }
