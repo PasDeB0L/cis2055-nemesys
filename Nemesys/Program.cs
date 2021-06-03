@@ -1,14 +1,14 @@
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection;
 using Nemesys.Models;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Nemesys
 {
@@ -24,26 +24,23 @@ namespace Nemesys
                 try
                 {
                     var context = services.GetRequiredService<AppDbContext>();
-
-                    // When USER will be on the project
-                     
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
                     var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-                   
+
                     DbInitializer.SeedRoles(roleManager);
                     DbInitializer.SeedUsers(userManager);
-                    DbInitializer.SeedData(userManager,context);
+                    DbInitializer.SeedData(userManager, context);
+
                 }
                 catch (Exception ex)
                 {
                     var logger = services.GetRequiredService<ILogger<Program>>();
-                    logger.LogError(ex, "An error occurred while seeding the database.");
+                    logger.LogError(ex, "An error occurred creating the DB.");
                 }
             }
             host.Run();
+
         }
-
-
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
@@ -56,17 +53,5 @@ namespace Nemesys
                 {
                     webBuilder.UseStartup<Startup>();
                 });
-        /**
-         * origianal programme
-        public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder =>
-                {
-                    webBuilder.UseStartup<Startup>();
-                });
-        
-
-        */
     }
-
 }

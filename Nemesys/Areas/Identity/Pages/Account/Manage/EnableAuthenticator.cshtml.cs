@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 using Nemesys.Models;
 
-namespace Bloggy.Areas.Identity.Pages.Account.Manage
+namespace Nemesys.Areas.Identity.Pages.Account.Manage
 {
     public class EnableAuthenticatorModel : PageModel
     {
@@ -149,7 +149,7 @@ namespace Bloggy.Areas.Identity.Pages.Account.Manage
         {
             return string.Format(
                 AuthenticatorUriFormat,
-                _urlEncoder.Encode("Bloggy"),
+                _urlEncoder.Encode("Nemesys"),
                 _urlEncoder.Encode(email),
                 unformattedKey);
         }

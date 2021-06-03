@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Bloggy.Areas.Identity.Pages.Account.Manage
+namespace Nemesys.Areas.Identity.Pages.Account.Manage
 {
     public partial class IndexModel : PageModel
     {

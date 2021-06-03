@@ -7,14 +7,15 @@ namespace Nemesys.Models.Interfaces
 {
     public interface INemesysRepository
     {
-        IEnumerable<Report> GetAllReports();
-        Report GetReportById(int blogPostId);
+        IEnumerable<BlogPost> GetAllBlogPosts();
+        BlogPost GetBlogPostById(int blogPostId);
 
-        void CreateReport(Report newBlogPost);
+        void CreateBlogPost(BlogPost newBlogPost);
 
-        void UpdateReport(Report updatedReport);
+        void UpdateBlogPost(BlogPost updatedBlogPost);
 
-        IEnumerable<Status> GetAllStatus();
-        Status GetStatusById(int statusId);
+        IEnumerable<Category> GetAllCategories();
+        Category GetCategoryById(int categoryId);
     }
+
 }
