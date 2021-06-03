@@ -16,10 +16,10 @@ namespace Nemesys.Migrations
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
-                .HasAnnotation("ProductVersion", "5.0.5")
+                .HasAnnotation("ProductVersion", "5.0.6")
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("Bloggy.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Nemesys.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -87,7 +87,7 @@ namespace Nemesys.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Bloggy.Models.BlogPost", b =>
+            modelBuilder.Entity("Nemesys.Models.BlogPost", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -127,7 +127,7 @@ namespace Nemesys.Migrations
                     b.ToTable("BlogPosts");
                 });
 
-            modelBuilder.Entity("Bloggy.Models.Category", b =>
+            modelBuilder.Entity("Nemesys.Models.Category", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -277,15 +277,15 @@ namespace Nemesys.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Bloggy.Models.BlogPost", b =>
+            modelBuilder.Entity("Nemesys.Models.BlogPost", b =>
                 {
-                    b.HasOne("Bloggy.Models.Category", "Category")
+                    b.HasOne("Nemesys.Models.Category", "Category")
                         .WithMany("BlogPosts")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Bloggy.Models.ApplicationUser", "User")
+                    b.HasOne("Nemesys.Models.ApplicationUser", "User")
                         .WithMany()
                         .HasForeignKey("UserId");
 
@@ -305,7 +305,7 @@ namespace Nemesys.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Bloggy.Models.ApplicationUser", null)
+                    b.HasOne("Nemesys.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -314,7 +314,7 @@ namespace Nemesys.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Bloggy.Models.ApplicationUser", null)
+                    b.HasOne("Nemesys.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -329,7 +329,7 @@ namespace Nemesys.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Bloggy.Models.ApplicationUser", null)
+                    b.HasOne("Nemesys.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -338,14 +338,14 @@ namespace Nemesys.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Bloggy.Models.ApplicationUser", null)
+                    b.HasOne("Nemesys.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Bloggy.Models.Category", b =>
+            modelBuilder.Entity("Nemesys.Models.Category", b =>
                 {
                     b.Navigation("BlogPosts");
                 });

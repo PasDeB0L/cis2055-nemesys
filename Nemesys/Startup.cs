@@ -1,12 +1,14 @@
+using Nemesys.Models.Interfaces;
+using Nemesys.Models.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Nemesys.Models;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Identity;
 using System;
-using Nemesys.Models;
 
 namespace Nemesys
 {

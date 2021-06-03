@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace BloNemesysggy.Migrations
+namespace Nemesys.Migrations
 {
     public partial class AuthorAlias : Migration
     {
