@@ -14,12 +14,15 @@ namespace Nemesys.Models
             //This will pass any options passed in the constructor to the base class DbContext
         }
 
+
+        public DbSet<Report> Reports { get; set; }
+        public DbSet<Investigation> Investigations { get; set; }
+        public DbSet<Status> Status { get; set; }
+        public DbSet<TypeOfHazard> TypeOfHazards { get; set; }
+
         public DbSet<Category> Categories { get; set; }
         public DbSet<BlogPost> BlogPosts { get; set; }
 
-        public DbSet<Report>  Reports { get; set; }
-        public DbSet<Investigation> Investigations { get; set; }
-        public DbSet<Status> Status { get; set; }
-        public DbSet<TypeOfHazard>  TypeOfHazards { get; set; }
+       
     }
 }

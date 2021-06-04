@@ -7,11 +7,20 @@ using Nemesys.Models.Interfaces;
 namespace Nemesys.Models.Repositories
 {
     //WRAP ALL METHODS IN TRY CATCH BLOCKS
-    public class MockNemesysRepository : INemesysRepository
+    public class MockNemesysRepository  : INemesysRepository
     {
+        /*
+         *  
+         *  
+         * JE CROIS QUE CA SERT A RIEN JE CROIS QUE CA SERT A RIEN JE CROIS QUE CA SERT A RIEN JE CROIS QUE CA SERT A RIEN JE CROIS QUE CA SERT A RIEN JE CROIS QUE CA SERT A RIEN JE CROIS QUE CA SERT A RIEN 
+         * 
+         * 
+         */
+
         private List<BlogPost> _posts;
         private List<Category> _categories;
 
+        
         public MockNemesysRepository()
         {
             if (_categories == null)
@@ -128,5 +137,6 @@ namespace Nemesys.Models.Repositories
         {
             return _categories.FirstOrDefault(c => c.Id == categoryId); //if not found, it returns null
         }
+        
     }
 }

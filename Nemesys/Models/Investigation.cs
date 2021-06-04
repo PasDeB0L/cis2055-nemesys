@@ -13,10 +13,10 @@ namespace Nemesys.Models
         public string Description { get; set; }
         public string InvestigatorDetails { get; set; }
 
+
         
         public int StatusId { get; set; }
-        //Reference navigation property
-        public Status Status { get; set; }
+        
 
 
         public int ReportId { get; set; }
