@@ -27,9 +27,9 @@ namespace Nemesys.Models.Interfaces
         IEnumerable<Report> GetAllReports();
         Report GetReportById(int reportId);
 
-        void CreatReport(BlogPost newBlogPost);
+        void CreateReport(Report report);
 
-        void UpdateReport(BlogPost updatedReport);
+        void UpdateReport(Report updatedReport);
 
         IEnumerable<Status> GetAllStatus();
         Status GetStatusById(int statusId);

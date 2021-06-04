@@ -151,7 +151,7 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public void CreatReport(Report report)
+        public void CreateReport(Report report)
         {
             try
             {
