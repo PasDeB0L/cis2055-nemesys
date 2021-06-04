@@ -12,16 +12,14 @@ namespace Nemesys.Models
         public DateTime Date { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
+        public string Location { get; set; }
         public string ReporterInformations { get; set; }
         public string ImageUrl { get; set; }
         
         public int Upvotes { get; set; }
 
+        public Boolean Investation { get; set; }
 
-        //Foreign Key - navigation property name + key property name
-        public int InvestigationId { get; set; }
-        //Reference navigation property
-        public Investigation Investigation { get; set; }
 
         //Foreign Key - navigation property name + key property name
         public int StatusId { get; set; }

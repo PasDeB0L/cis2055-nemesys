@@ -16,6 +16,10 @@ namespace Nemesys.Models
 
         public DbSet<Category> Categories { get; set; }
         public DbSet<BlogPost> BlogPosts { get; set; }
-    }
 
+        public DbSet<Report>  Reports { get; set; }
+        public DbSet<Investigation> Investigations { get; set; }
+        public DbSet<Status> Status { get; set; }
+        public DbSet<TypeOfHazard>  TypeOfHazards { get; set; }
+    }
 }
