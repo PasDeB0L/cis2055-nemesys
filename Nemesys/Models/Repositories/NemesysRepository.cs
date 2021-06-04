@@ -121,5 +121,136 @@ namespace Nemesys.Models.Repositories
                 throw;
             }
         }
+
+
+        public IEnumerable<Report> GetAllReports()
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.Reports.Include(b => b.Status).OrderBy(b => b.CreatedDate);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public Report GetReportById(int reportId)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.Reports.Include(b => b.Status).Include(b => b.User).FirstOrDefault(p => p.Id == reportId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public void CreatReport(Report report)
+        {
+            try
+            {
+                _appDbContext.Reports.Add(report);
+                _appDbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public void UpdateReport(Report report)
+        {
+            try
+            {
+                var existingReport = _appDbContext.Reports.SingleOrDefault(bp => bp.Id == report.Id);
+                if (existingReport != null)
+                {
+
+                    existingReport.CreatedDate = report.CreatedDate;
+                    existingReport.Date = report.Date;
+                    existingReport.Title = report.Title;
+                    existingReport.Description = report.Description;
+                    existingReport.Location = report.Location;
+                    existingReport.ReporterInformations = report.ReporterInformations;
+                    existingReport.ImageUrl = report.ImageUrl;
+                    existingReport.Upvotes = report.Upvotes;
+                    existingReport.Investation = report.Investation;
+                    existingReport.StatusId = report.StatusId;
+                    existingReport.TypeOfHazardId = report.TypeOfHazardId;
+
+
+                    _appDbContext.Entry(existingReport).State = EntityState.Modified;
+                    _appDbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public IEnumerable<Status> GetAllStatus()
+        {
+            try
+            {
+                //Not loading related blog posts
+                return _appDbContext.Status;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public Status GetStatusById(int statusId)
+        {
+            try
+            {
+                //Not loading related blog posts
+                return _appDbContext.Status.FirstOrDefault(c => c.Id == statusId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public IEnumerable<TypeOfHazard> GetAllTypesOfHazard()
+        {
+            try
+            {
+                //Not loading related blog posts
+                return _appDbContext.TypeOfHazards;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public TypeOfHazard GetTypeOfHazardById(int typeOfHazardId)
+        {
+            try
+            {
+                //Not loading related blog posts
+                return _appDbContext.TypeOfHazards.FirstOrDefault(c => c.Id == typeOfHazardId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
     }
 }

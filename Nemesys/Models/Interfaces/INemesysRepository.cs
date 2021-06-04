@@ -16,6 +16,26 @@ namespace Nemesys.Models.Interfaces
 
         IEnumerable<Category> GetAllCategories();
         Category GetCategoryById(int categoryId);
+
+
+
+        /*
+         * 
+         * pour nemesys
+         * 
+         */
+        IEnumerable<Report> GetAllReports();
+        Report GetReportById(int reportId);
+
+        void CreatReport(BlogPost newBlogPost);
+
+        void UpdateReport(BlogPost updatedReport);
+
+        IEnumerable<Status> GetAllStatus();
+        Status GetStatusById(int statusId);
+
+        IEnumerable<TypeOfHazard> GetAllTypesOfHazard();
+        TypeOfHazard GetTypeOfHazardById(int typeOfHazardId);
     }
 
 }
