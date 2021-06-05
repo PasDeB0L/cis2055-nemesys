@@ -9,5 +9,7 @@ namespace Nemesys.ViewModels
     {
         public int TotalEntries { get; set; }
         public IEnumerable<ReportViewModel> Reports { get; set; }
+
+        public Task<string> UserId { get; set; }
     }
 }

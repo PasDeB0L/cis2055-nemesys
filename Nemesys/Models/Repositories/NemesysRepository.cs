@@ -128,7 +128,7 @@ namespace Nemesys.Models.Repositories
             try
             {
                 //Using Eager loading with Include
-                return _appDbContext.Reports.Include(b => b.Status).OrderBy(b => b.CreatedDate);
+                return _appDbContext.Reports.Include(b => b.Status).Include(b => b.TypeOfHazard).OrderBy(b => b.CreatedDate);
             }
             catch (Exception ex)
             {
@@ -229,8 +229,8 @@ namespace Nemesys.Models.Repositories
         {
             try
             {
-                //Not loading related blog posts
-                return _appDbContext.TypeOfHazards;
+                //Not loading related report
+                return _appDbContext.TypeOfHazard;
             }
             catch (Exception ex)
             {
@@ -244,7 +244,7 @@ namespace Nemesys.Models.Repositories
             try
             {
                 //Not loading related blog posts
-                return _appDbContext.TypeOfHazards.FirstOrDefault(c => c.Id == typeOfHazardId);
+                return _appDbContext.TypeOfHazard.FirstOrDefault(c => c.Id == typeOfHazardId);
             }
             catch (Exception ex)
             {

@@ -32,8 +32,7 @@ namespace Nemesys.Contollers
             _logger = logger;
         }
 
-
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
             try
             {
@@ -56,21 +55,35 @@ namespace Nemesys.Contollers
                         ImageUrl = b.ImageUrl,
                         Upvotes = b.Upvotes,
                         Investigation = b.Investation,
-
+                        
+                        
                         Status = new StatusViewModel()
                         {
                             Id = b.Status.Id,
                             Name = b.Status.Name
                         },
+                        TypeOfHazard = new TypeOfHazardViewModel()
+                        {
+                            Id = b.TypeOfHazard.Id,
+                            Name = b.TypeOfHazard.Name
+                        },
+
                         Author = new AuthorViewModel()
                         {
                             Id = b.UserId,
                             Name = (_userManager.FindByIdAsync(b.UserId).Result != null) ? _userManager.FindByIdAsync(b.UserId).Result.UserName : "Anonymous"
                         }
 
-
                     })
+
+                    
                 };
+
+                 
+
+                ViewData["User"] = await GetCurrentUserId();
+
+
                 return View(model);
             }
             catch (Exception ex)
@@ -80,6 +93,14 @@ namespace Nemesys.Contollers
             }
         }
 
+        [HttpGet]
+        public async Task<string> GetCurrentUserId()
+        {
+            ApplicationUser usr = await GetCurrentUserAsync();
+            return usr?.Id;
+        }
+
+        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
         public IActionResult Details(int id)
         {
@@ -204,6 +225,7 @@ namespace Nemesys.Contollers
                         StatusId = 3, // 3 = open 
                         TypeOfHazardId = newReport.TypeOfHazardId,
                         UserId = _userManager.GetUserId(User)
+                        
                     };
 
 
@@ -394,6 +416,20 @@ namespace Nemesys.Contollers
 
                     return View(updatedReport);
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+                return View("Error");
+            }
+        }
+
+
+        public IActionResult HallOfFame()
+        {
+            try
+            {
+                return View();
             }
             catch (Exception ex)
             {

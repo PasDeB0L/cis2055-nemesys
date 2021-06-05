@@ -392,7 +392,7 @@ namespace Nemesys.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TypeOfHazards");
+                    b.ToTable("TypeOfHazard");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

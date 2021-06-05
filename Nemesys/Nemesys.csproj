@@ -71,4 +71,11 @@
     <Folder Include="wwwroot\images\reports\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Views\ReportPost\Index.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

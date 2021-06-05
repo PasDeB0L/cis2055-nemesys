@@ -74,7 +74,7 @@ namespace Nemesys.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TypeOfHazards",
+                name: "TypeOfHazard",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
@@ -83,7 +83,7 @@ namespace Nemesys.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TypeOfHazards", x => x.Id);
+                    table.PrimaryKey("PK_TypeOfHazard", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -259,9 +259,9 @@ namespace Nemesys.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_Reports_TypeOfHazards_TypeOfHazardId",
+                        name: "FK_Reports_TypeOfHazard_TypeOfHazardId",
                         column: x => x.TypeOfHazardId,
-                        principalTable: "TypeOfHazards",
+                        principalTable: "TypeOfHazard",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -410,7 +410,7 @@ namespace Nemesys.Migrations
                 name: "Status");
 
             migrationBuilder.DropTable(
-                name: "TypeOfHazards");
+                name: "TypeOfHazard");
         }
     }
 }

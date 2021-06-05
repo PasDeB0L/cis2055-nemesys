@@ -167,7 +167,7 @@ namespace Nemesys.Models
             }
 
 
-            if (!context.TypeOfHazards.Any())
+            if (!context.TypeOfHazard.Any())
             {
                 context.AddRange
                 (
@@ -211,7 +211,7 @@ namespace Nemesys.Models
                         Upvotes = 0,
                         Investation = false,
                         StatusId = 1,
-                        TypeOfHazardId = 2,
+                        TypeOfHazardId = 1,
                         UserId = user.Id
                     },
                     new Report()

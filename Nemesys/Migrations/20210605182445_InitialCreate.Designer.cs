@@ -10,7 +10,7 @@ using Nemesys.Models;
 namespace Nemesys.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20210604191330_InitialCreate")]
+    [Migration("20210605182445_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -394,7 +394,7 @@ namespace Nemesys.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("TypeOfHazards");
+                    b.ToTable("TypeOfHazard");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>

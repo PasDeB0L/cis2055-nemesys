@@ -1,7 +1,62 @@
-﻿
+﻿@model Nemesys.ViewModels.ReportListViewModel
+
+
+
+
 @{
     ViewData["Title"] = "Report Posts";
 }
 
 <h1>@ViewData["Title"]</h1>
 
+<h2>Showing @Model.TotalEntries report entries</h2>
+
+<div class="row">
+    @foreach (var report in Model.Reports)
+    {
+        <div class="card" style="width: 18rem;padding:20px; margin:20px;">
+            <img class="card-img-top" src="@report.ImageUrl" alt="Image for @report.Title" />
+            <div class="card-body">
+                <h3 class="card-title">@report.Title</h3>
+                <p class="small">
+                    @report.Date.ToShortDateString() <br>
+                    Description : @report.Description<br>
+                    Location : @report.Location<br>
+                    Type of hazard  : @report.TypeOfHazard.Name<br>
+                    Status : @report.Status.Name<br>
+                    Upvotes : @report.Upvotes<br>
+                    by @report.Author.Name @report.CreatedDate.ToShortDateString()
+                </p>
+
+
+                @if (1 == 1) // regarder si le user a pas deja upvote pour ce report
+                {
+                    <a asp-controller="ReportPost" asp-action="Upvote" asp-route-id="@report.Id" class="btn btn-primary">Upvote</a>
+                }
+
+                @if (@report.Status.Name.Equals("Open"))
+                {
+                    @if (@report.Status.Name.Equals("Open")) // User.IsInRole("Administrator")
+                    {
+
+                        <a asp-controller="ReportPost" asp-action="Investigation" asp-route-id="@report.Id" class="btn btn-primary">Investigate</a>
+                    }
+                }
+                else
+                {
+                    <a asp-controller="ReportPost" asp-action="Investigation" asp-route-id="@report.Id" class="btn btn-primary">Investigation</a>
+                }
+
+
+
+                @if (@report.Author.Id.Equals(@ViewData["User"]))
+                {
+                    <a asp-controller="ReportPost" asp-action="Delete" asp-route-id="@report.Id" class="btn btn-primary">Delete</a>
+                    <a asp-controller="ReportPost" asp-action="Edit" asp-route-id="@report.Id" class="btn btn-primary">Edit</a>
+                }
+
+
+            </div>
+        </div>
+    }
+</div>
