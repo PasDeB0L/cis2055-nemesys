@@ -489,3 +489,4 @@ C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\Rep
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Details.cshtml.g.cs
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Edit.cshtml.g.cs
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Index.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\InvestigationPost\Dashboard.cshtml.g.cs

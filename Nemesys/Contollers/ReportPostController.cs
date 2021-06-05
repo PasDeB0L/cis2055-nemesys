@@ -1,11 +1,15 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nemesys.Models;
 using Nemesys.Models.Interfaces;
 using Nemesys.ViewModels;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -47,6 +51,7 @@ namespace Nemesys.Contollers
                         Date = b.Date,
                         Title = b.Title,
                         Description = b.Description,
+                        Location = b.Location,
                         ReporterInformations = b.ReporterInformations,
                         ImageUrl = b.ImageUrl,
                         Upvotes = b.Upvotes,
@@ -92,6 +97,7 @@ namespace Nemesys.Contollers
                         Date = b.Date,
                         Title = b.Title,
                         Description = b.Description,
+                        Location = b.Location,
                         ReporterInformations = b.ReporterInformations,
                         ImageUrl = b.ImageUrl,
                         Upvotes = b.Upvotes,
@@ -126,9 +132,275 @@ namespace Nemesys.Contollers
                 _logger.LogError(ex, ex.Message, ex.Data);
                 return View("Error");
             }
-
         }
 
+
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Create()
+        {
+            try
+            {
+                //Load all types Of hazard and create a list of TypeOfHazardViewModel
+                var typeOfHazardList = _nemesysRepository.GetAllTypesOfHazard().Select(c => new TypeOfHazardViewModel()
+                {
+                    Id = c.Id,
+                    Name = c.Name
+                }).ToList();
+
+                //Pass the list into an EditReportViewModel, which is used by the View (all other properties may be left blank, unless you want to add other default values
+                var model = new EditReportViewModel()
+                {
+                    TypeOfHazardList =typeOfHazardList
+                };
+
+                //Pass model to View
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+                return View("Error");
+            }
+        }
+
+        // POST: ReportPost/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        [HttpPost]
+        [Authorize]
+        public IActionResult Create([Bind("Title, Description, Location, ImageToUpload, TypeOfHazardId, Date")] EditReportViewModel newReport)
+        {
+            try
+            {
+                if (ModelState.IsValid)
+                {
+                    string fileName = "";
+                    if (newReport.ImageToUpload != null)
+                    {
+                        //At this point you should check size, extension etc...
+                        //Then persist using a new name for consistency (e.g. new Guid)
+                        var extension = "." + newReport.ImageToUpload.FileName.Split('.')[newReport.ImageToUpload.FileName.Split('.').Length - 1];
+                        fileName = Guid.NewGuid().ToString() + extension;
+                        var path = Directory.GetCurrentDirectory() + "\\wwwroot\\images\\blogposts\\" + fileName; // report
+                        using (var bits = new FileStream(path, FileMode.Create))
+                        {
+                            newReport.ImageToUpload.CopyTo(bits);
+                        }
+                    }
+
+
+                    Report report = new Report()
+                    {
+                        CreatedDate = DateTime.UtcNow,
+                        Date = newReport.Date,
+                        Title = newReport.Title,
+                        Description = newReport.Description,
+                        Location = newReport.Location,
+                        ReporterInformations = _userManager.GetUserId(User), // modifier
+                        ImageUrl = "/images/blogposts/" + fileName, // changer en reports apres
+                        Upvotes = 0,
+                        Investation = false,
+                        StatusId = 3, // 3 = open 
+                        TypeOfHazardId = newReport.TypeOfHazardId,
+                        UserId = _userManager.GetUserId(User)
+                    };
+
+
+                    _nemesysRepository.CreateReport(report);
+                    return RedirectToAction("Index");
+                }
+                else
+                {
+                    //Load all types Of hazard and create a list of TypeOfHazardViewModel
+                    var typeOfHazardList = _nemesysRepository.GetAllTypesOfHazard().Select(c => new TypeOfHazardViewModel()
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    }).ToList();
+
+
+                    //Re-attach to view model before sending back to the View (this is necessary so that the View can repopulate the drop down and pre-select according to the TypeOfHazardId
+                    newReport.TypeOfHazardList = typeOfHazardList;
+
+                    return View(newReport);
+                }
+            }
+            catch (DbUpdateException e)
+            {
+                SqlException s = e.InnerException as SqlException;
+                if (s != null)
+                {
+                    switch (s.Number)
+                    {
+                        case 547:  //Unique constraint error
+                            {
+                                ModelState.AddModelError(string.Empty, string.Format("Foreign key for type of hazard with Id '{0}' does not exists.", newReport.TypeOfHazardId));
+                                break;
+                            }
+                        default:
+                            {
+                                ModelState.AddModelError(string.Empty,
+                                 "A database error occured - please contact your system administrator.");
+                                break;
+                            }
+                    }
+                   
+
+                    //Load all types Of hazard and create a list of TypeOfHazardViewModel
+                    var typeOfHazardList = _nemesysRepository.GetAllTypesOfHazard().Select(c => new TypeOfHazardViewModel()
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    }).ToList();
+
+                    //Re-attach to view model before sending back to the View (this is necessary so that the View can repopulate the drop down and pre-select according to the TypeOfHazardId
+                    newReport.TypeOfHazardList = typeOfHazardList;
+                }
+
+                return View(newReport);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+                return View("Error");
+            }
+        }
+
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Edit(int id)
+        {
+            try
+            {
+                var existingReport = _nemesysRepository.GetReportById(id);
+                if (existingReport != null)
+                {
+                    //Check if the current user has access to this resource
+                    var currentUser = await _userManager.GetUserAsync(User);
+                    if (existingReport.User.Id == currentUser.Id)
+                    {
+                        EditReportViewModel model = new EditReportViewModel()
+                        {
+                            Id = existingReport.Id,
+                            Title = existingReport.Title,
+                            CreatedDate = existingReport.CreatedDate,
+                            Date = existingReport.Date,
+                            Description = existingReport.Description,
+                            Location = existingReport.Location,
+                            ImageUrl = existingReport.ImageUrl,
+                            StatusId = existingReport.StatusId,
+                            TypeOfHazardId = existingReport.TypeOfHazardId
+                        };
+
+                        
+
+                        
+                        //Load all types Of hazard and create a list of TypeOfHazardViewModel
+                        var typeOfHazardList = _nemesysRepository.GetAllTypesOfHazard().Select(c => new TypeOfHazardViewModel()
+                        {
+                            Id = c.Id,
+                            Name = c.Name
+                        }).ToList();
+
+
+                        //Attach to view model - view will pre-select according to the value in statusId and TypeOfHazard
+                        model.TypeOfHazardList = typeOfHazardList;
+
+                        return View(model);
+                    }
+                    else
+                        return Unauthorized();
+                }
+                else
+                    return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+                return View("Error");
+            }
+        }
+
+
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit([FromRoute] int id, [Bind("Id, Title, Description, ImageToUpload, StatusId, TypeOfHazardId")] EditReportViewModel updatedReport)
+        {
+            try
+            {
+                var modelToUpdate = _nemesysRepository.GetReportById(id);
+                if (modelToUpdate == null)
+                {
+                    return NotFound();
+                }
+
+                //Check if the current user has access to this resource
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (modelToUpdate.User.Id == currentUser.Id)
+                {
+                    if (ModelState.IsValid)
+                    {
+                        string imageUrl = "";
+
+                        if (updatedReport.ImageToUpload != null)
+                        {
+                            string fileName = "";
+                            //At this point you should check size, extension etc...
+                            //Then persist using a new name for consistency (e.g. new Guid)
+                            var extension = "." + updatedReport.ImageToUpload.FileName.Split('.')[updatedReport.ImageToUpload.FileName.Split('.').Length - 1];
+                            fileName = Guid.NewGuid().ToString() + extension;
+                            var path = Directory.GetCurrentDirectory() + "\\wwwroot\\images\\blogposts\\" + fileName; // changer la aussi reports
+                            using (var bits = new FileStream(path, FileMode.Create))
+                            {
+                                updatedReport.ImageToUpload.CopyTo(bits);
+                            }
+                            imageUrl = "/images/blogposts/" + fileName; // la aussi changer pour reports
+                        }
+                        else
+                            imageUrl = modelToUpdate.ImageUrl;
+
+
+                        modelToUpdate.Title = updatedReport.Title;
+                        modelToUpdate.Description = updatedReport.Description;
+                        modelToUpdate.Location = updatedReport.Location;
+                        modelToUpdate.Date = updatedReport.Date;
+                        modelToUpdate.ImageUrl = imageUrl;
+                        modelToUpdate.TypeOfHazardId = updatedReport.TypeOfHazardId;
+
+
+                        _nemesysRepository.UpdateReport(modelToUpdate);
+
+                        return RedirectToAction("Index");
+                    }
+                    else
+                        return Unauthorized(); //or redirect to error controller with 401/403 actions
+                }
+                else
+                {
+                    //Load all types Of hazard and create a list of TypeOfHazardViewModel
+                    var typeOfHazardList = _nemesysRepository.GetAllTypesOfHazard().Select(c => new TypeOfHazardViewModel()
+                    {
+                        Id = c.Id,
+                        Name = c.Name
+                    }).ToList();
+
+                    //Re-attach to view model before sending back to the View (this is necessary so that the View can repopulate the drop down and pre-select according to the CategoryId
+                    updatedReport.TypeOfHazardList = typeOfHazardList;
+
+
+                    return View(updatedReport);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+                return View("Error");
+            }
+        }
 
     }
 }
