@@ -301,8 +301,9 @@ namespace Nemesys.Contollers
                 {
                     //Check if the current user has access to this resource
                     var currentUser = await _userManager.GetUserAsync(User);
-                    if (existingReport.User.Id == currentUser.Id)
-                    {
+                    
+                    if( existingReport.User.Id == currentUser.Id)
+                    {                            
                         EditReportViewModel model = new EditReportViewModel()
                         {
                             Id = existingReport.Id,
@@ -316,11 +317,16 @@ namespace Nemesys.Contollers
                             TypeOfHazardId = existingReport.TypeOfHazardId
                         };
 
-                        
 
-                        
                         //Load all types Of hazard and create a list of TypeOfHazardViewModel
                         var typeOfHazardList = _nemesysRepository.GetAllTypesOfHazard().Select(c => new TypeOfHazardViewModel()
+                        {
+                            Id = c.Id,
+                            Name = c.Name
+                        }).ToList();
+
+                        //Load all Status and create a list of StatusViewModel
+                        var StatusList = _nemesysRepository.GetAllStatus().Select(c => new StatusViewModel()
                         {
                             Id = c.Id,
                             Name = c.Name
@@ -329,11 +335,15 @@ namespace Nemesys.Contollers
 
                         //Attach to view model - view will pre-select according to the value in statusId and TypeOfHazard
                         model.TypeOfHazardList = typeOfHazardList;
+                        model.StatusList = StatusList;
 
                         return View(model);
                     }
                     else
+                    {
+                        Console.WriteLine("1");
                         return Unauthorized();
+                    }
                 }
                 else
                     return RedirectToAction("Index");
@@ -350,7 +360,7 @@ namespace Nemesys.Contollers
         [HttpPost]
         [Authorize]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit([FromRoute] int id, [Bind("Id, Title, Description, ImageToUpload, StatusId, TypeOfHazardId")] EditReportViewModel updatedReport)
+        public async Task<IActionResult> Edit([FromRoute] int id, [Bind("Id, Title, TypeOfHazardId, Description, Location, Date, ImageToUpload")] EditReportViewModel updatedReport)
         {
             try
             {
@@ -366,6 +376,7 @@ namespace Nemesys.Contollers
                 {
                     if (ModelState.IsValid)
                     {
+                        Console.WriteLine("valid");
                         string imageUrl = "";
 
                         if (updatedReport.ImageToUpload != null)
@@ -399,7 +410,10 @@ namespace Nemesys.Contollers
                         return RedirectToAction("Index");
                     }
                     else
-                        return Unauthorized(); //or redirect to error controller with 401/403 actions
+                    {
+                        Console.WriteLine("non valide");
+                        return Unauthorized();
+                    }
                 }
                 else
                 {

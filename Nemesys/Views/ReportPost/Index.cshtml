@@ -1,6 +1,7 @@
 ﻿@model Nemesys.ViewModels.ReportListViewModel
 
-
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Nemesys.Models.ApplicationUser> UserManager
 
 
 @{
@@ -46,15 +47,12 @@
                 {
                     <a asp-controller="ReportPost" asp-action="Investigation" asp-route-id="@report.Id" class="btn btn-primary">Investigation</a>
                 }
-
-
-
+ 
                 @if (@report.Author.Id.Equals(@ViewData["User"]))
                 {
                     <a asp-controller="ReportPost" asp-action="Delete" asp-route-id="@report.Id" class="btn btn-primary">Delete</a>
                     <a asp-controller="ReportPost" asp-action="Edit" asp-route-id="@report.Id" class="btn btn-primary">Edit</a>
                 }
-
 
             </div>
         </div>
