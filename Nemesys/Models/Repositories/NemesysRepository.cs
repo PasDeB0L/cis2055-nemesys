@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Nemesys.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Nemesys.ViewModels;
 
 namespace Nemesys.Models.Repositories
 {
@@ -27,100 +28,9 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public IEnumerable<BlogPost> GetAllBlogPosts()
-        {
-            try
-            {
-                //Using Eager loading with Include
-                return _appDbContext.BlogPosts.Include(b => b.Category).OrderBy(b => b.CreatedDate);
-            }
-            catch(Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
+        
 
-        public BlogPost GetBlogPostById(int blogPostId)
-        {
-            try
-            {
-                //Using Eager loading with Include
-                return _appDbContext.BlogPosts.Include(b => b.Category).Include(b => b.User).FirstOrDefault(p => p.Id == blogPostId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
 
-        public void CreateBlogPost(BlogPost blogPost)
-        {
-            try
-            {
-                _appDbContext.BlogPosts.Add(blogPost);
-                _appDbContext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-        public void UpdateBlogPost(BlogPost blogPost)
-        {
-            try
-            {
-                var existingBlogPost = _appDbContext.BlogPosts.SingleOrDefault(bp => bp.Id == blogPost.Id);
-                if (existingBlogPost != null)
-                {
-                    existingBlogPost.Title = blogPost.Title;
-                    existingBlogPost.Content = blogPost.Content;
-                    existingBlogPost.UpdatedDate = blogPost.UpdatedDate;
-                    existingBlogPost.ImageUrl = blogPost.ImageUrl;
-                    existingBlogPost.CategoryId = blogPost.CategoryId;
-                    existingBlogPost.UserId = blogPost.UserId;
-
-                    _appDbContext.Entry(existingBlogPost).State = EntityState.Modified;
-                    _appDbContext.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-        public IEnumerable<Category> GetAllCategories()
-        {
-            try
-            {
-                //Not loading related blog posts
-                return _appDbContext.Categories;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-        public Category GetCategoryById(int categoryId)
-        {
-            try
-            {
-                //Not loading related blog posts
-                return _appDbContext.Categories.FirstOrDefault(c => c.Id == categoryId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
 
 
         public IEnumerable<Report> GetAllReports()
@@ -181,7 +91,7 @@ namespace Nemesys.Models.Repositories
                     existingReport.ReporterInformations = report.ReporterInformations;
                     existingReport.ImageUrl = report.ImageUrl;
                     existingReport.Upvotes = report.Upvotes;
-                    existingReport.Investation = report.Investation;
+                    //existingReport.Investation = report.Investation;
                     existingReport.StatusId = report.StatusId;
                     existingReport.TypeOfHazardId = report.TypeOfHazardId;
 
@@ -196,6 +106,108 @@ namespace Nemesys.Models.Repositories
                 throw;
             }
         }
+
+
+
+
+
+
+        public IEnumerable<Investigation> GetAllInvestigations()
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.Investigations.OrderBy(b => b.DateOfAction);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+        public Investigation GetInvestigationById(int investigationId)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.Id == investigationId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+
+        public InvestigationViewModel GetInvestigationViewModelById(int investigationId)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                Investigation investigation =  _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.Id == investigationId);
+
+                InvestigationViewModel InvestigationVM = new InvestigationViewModel
+                {
+                    Id = investigation.Id,
+                    DateOfAction = investigation.DateOfAction,
+                    Description = investigation.Description,
+                    InvestigatorDetails = investigation.InvestigatorDetails
+                };
+
+                return InvestigationVM;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+
+
+
+
+
+        public void CreateInvestigation(Investigation investigation)
+        {
+            try
+            {
+                _appDbContext.Investigations.Add(investigation);
+                _appDbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public void UpdateInvestigation(Investigation updatedInvestigation)
+        {
+            try
+            {
+                var existingInvestigation = _appDbContext.Investigations.SingleOrDefault(bp => bp.Id == updatedInvestigation.Id);
+                if (existingInvestigation != null)
+                {
+
+                    existingInvestigation.Description = updatedInvestigation.Description;
+                    existingInvestigation.DateOfAction = updatedInvestigation.DateOfAction ;
+                    existingInvestigation.InvestigatorDetails = updatedInvestigation.InvestigatorDetails ;
+                    existingInvestigation.StatusId = updatedInvestigation.StatusId ;
+                    
+
+                    _appDbContext.Entry(existingInvestigation).State = EntityState.Modified;
+                    _appDbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
 
         public IEnumerable<Status> GetAllStatus()
         {
@@ -252,5 +264,113 @@ namespace Nemesys.Models.Repositories
                 throw;
             }
         }
+
+
+
+
+
+
+
+
+
+
+
+        public IEnumerable<Category> GetAllCategories()
+        {
+            try
+            {
+                //Not loading related blog posts
+                return _appDbContext.Categories;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public Category GetCategoryById(int categoryId)
+        {
+            try
+            {
+                //Not loading related blog posts
+                return _appDbContext.Categories.FirstOrDefault(c => c.Id == categoryId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+
+
+        public IEnumerable<BlogPost> GetAllBlogPosts()
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.BlogPosts.Include(b => b.Category).OrderBy(b => b.CreatedDate);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public BlogPost GetBlogPostById(int blogPostId)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.BlogPosts.Include(b => b.Category).Include(b => b.User).FirstOrDefault(p => p.Id == blogPostId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public void CreateBlogPost(BlogPost blogPost)
+        {
+            try
+            {
+                _appDbContext.BlogPosts.Add(blogPost);
+                _appDbContext.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public void UpdateBlogPost(BlogPost blogPost)
+        {
+            try
+            {
+                var existingBlogPost = _appDbContext.BlogPosts.SingleOrDefault(bp => bp.Id == blogPost.Id);
+                if (existingBlogPost != null)
+                {
+                    existingBlogPost.Title = blogPost.Title;
+                    existingBlogPost.Content = blogPost.Content;
+                    existingBlogPost.UpdatedDate = blogPost.UpdatedDate;
+                    existingBlogPost.ImageUrl = blogPost.ImageUrl;
+                    existingBlogPost.CategoryId = blogPost.CategoryId;
+                    existingBlogPost.UserId = blogPost.UserId;
+
+                    _appDbContext.Entry(existingBlogPost).State = EntityState.Modified;
+                    _appDbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
     }
 }

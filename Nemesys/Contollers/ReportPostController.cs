@@ -54,9 +54,10 @@ namespace Nemesys.Contollers
                         ReporterInformations = b.ReporterInformations,
                         ImageUrl = b.ImageUrl,
                         Upvotes = b.Upvotes,
-                        Investigation = b.Investation,
-                        
-                        
+
+                        //Investigation = b.Investation,
+
+
                         Status = new StatusViewModel()
                         {
                             Id = b.Status.Id,
@@ -67,12 +68,15 @@ namespace Nemesys.Contollers
                             Id = b.TypeOfHazard.Id,
                             Name = b.TypeOfHazard.Name
                         },
-
                         Author = new AuthorViewModel()
                         {
                             Id = b.UserId,
                             Name = (_userManager.FindByIdAsync(b.UserId).Result != null) ? _userManager.FindByIdAsync(b.UserId).Result.UserName : "Anonymous"
-                        }
+                        },
+
+                        //Investigation = _nemesysRepository.GetInvestigationViewModelById(b.InvestationId)
+
+                        //Investigation = _nemesysRepository.GetInvestigationViewModelById(b.Id)
 
                     })
 
@@ -122,8 +126,8 @@ namespace Nemesys.Contollers
                         ReporterInformations = b.ReporterInformations,
                         ImageUrl = b.ImageUrl,
                         Upvotes = b.Upvotes,
-                        Investigation = b.Investation,
-
+                        //Investigation = b.Investation,
+                        //Investigation = _nemesysRepository.GetInvestigationViewModelById(b.Id),
 
 
                         Status = new StatusViewModel()
@@ -221,7 +225,7 @@ namespace Nemesys.Contollers
                         ReporterInformations = _userManager.GetUserId(User), // modifier
                         ImageUrl = "/images/blogposts/" + fileName, // changer en reports apres
                         Upvotes = 0,
-                        Investation = false,
+                        //InvestationId = false,
                         StatusId = 3, // 3 = open 
                         TypeOfHazardId = newReport.TypeOfHazardId,
                         UserId = _userManager.GetUserId(User)

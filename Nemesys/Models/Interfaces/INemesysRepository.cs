@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nemesys.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,6 +31,20 @@ namespace Nemesys.Models.Interfaces
         void CreateReport(Report report);
 
         void UpdateReport(Report updatedReport);
+
+
+        IEnumerable<Investigation> GetAllInvestigations();
+        Investigation GetInvestigationById(int investigationId);
+
+
+        InvestigationViewModel GetInvestigationViewModelById(int investigationId);
+
+
+
+        void CreateInvestigation(Investigation investigation);
+
+        void UpdateInvestigation(Investigation updatedInvestigation);
+
 
         IEnumerable<Status> GetAllStatus();
         Status GetStatusById(int statusId);

@@ -209,7 +209,7 @@ namespace Nemesys.Models
                         ReporterInformations = user.Email,
                         ImageUrl = "/images/seed1.jpg",
                         Upvotes = 0,
-                        Investation = false,
+                        //InvestationId = 0,
                         StatusId = 1,
                         TypeOfHazardId = 1,
                         UserId = user.Id
@@ -224,7 +224,7 @@ namespace Nemesys.Models
                         ReporterInformations = user.Email,
                         ImageUrl = "/images/seed2.jpg",
                         Upvotes = 2,
-                        Investation = true,
+                        //InvestationId = 1,
                         StatusId = 4,
                         TypeOfHazardId = 2,
                         UserId = user.Id
