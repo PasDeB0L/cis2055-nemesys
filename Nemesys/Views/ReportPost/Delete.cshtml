@@ -28,12 +28,26 @@
     </div>
 </div>
 
-<a asp-controller="BlogPost" asp-action="Index" class="btn btn-primary">Back to list</a>
+
+@if ( @Model.Investigation != null )  
+{
+    <h2>It will also delete this investigation</h2>
+    <div class="card" style="width: 90%;padding:20px; margin:20px;">
+        <div class="card-body">
+            <p class="card-text">Date of Action : @Model.Investigation.DateOfAction</p>
+            <p class="small">Description : @Model.Investigation.Description</p>
+            <p class="small">Investigator details  : @Model.Investigation.</p>
+        </div>
+  </div>
+}
 
 
-<form asp-action="Delete">
-    <input type="hidden" asp-for="Id" />
-    <input type="submit" value="Delete" class="btn btn-danger" /> |
-    <a asp-action="Index">Back to List</a>
-</form>
-</div>
+    <a asp-controller="ReportPost" asp-action="Index" class="btn btn-primary">Back to reports</a>
+
+
+    <a class="nav-link text-dark" asp-area="" asp-controller="ReportPost" asp-action="Index">Reports</a>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>

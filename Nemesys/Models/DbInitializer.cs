@@ -40,7 +40,7 @@ namespace Nemesys.Models
                     userManager.AddToRoleAsync(user, "User").Wait();
                 }
 
-
+                
                 var admin = new ApplicationUser()
                 {
                     Email = "testadmin@testmail.com",
@@ -245,27 +245,15 @@ namespace Nemesys.Models
                     new Investigation()
                     {
                         DateOfAction = DateTime.UtcNow,
-                        Description = "The electrician was there and he fixed the electricity probleme",
+                        Description = "test invest",
                         InvestigatorDetails = user.Email,
                         StatusId = 4,
-                        ReportId = 2,
+                        ReportId = 5,
                         UserId = user.Id
                     }
                 );
                 context.SaveChanges();
             }
-
-
-
-
-
-
-
-
-
-
-            
         }
     }
-
 }

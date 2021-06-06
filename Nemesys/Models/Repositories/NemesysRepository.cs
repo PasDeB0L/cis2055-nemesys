@@ -6,6 +6,7 @@ using Nemesys.Models.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nemesys.ViewModels;
+using Microsoft.AspNetCore.Identity;
 
 namespace Nemesys.Models.Repositories
 {
@@ -28,11 +29,25 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        
 
 
-
-
+        /*
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * REPORTS 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
         public IEnumerable<Report> GetAllReports()
         {
             try
@@ -52,7 +67,7 @@ namespace Nemesys.Models.Repositories
             try
             {
                 //Using Eager loading with Include
-                return _appDbContext.Reports.Include(b => b.Status).Include(b => b.User).FirstOrDefault(p => p.Id == reportId);
+                return _appDbContext.Reports.Include(b => b.Status).Include(b => b.TypeOfHazard).Include(b => b.User).FirstOrDefault(p => p.Id == reportId);
             }
             catch (Exception ex)
             {
@@ -73,6 +88,23 @@ namespace Nemesys.Models.Repositories
                 _logger.LogError(ex.Message);
                 throw;
             }
+        }
+
+        public async Task DeleteReport(int reportId)
+        {
+            await DeleteReport(GetReportById(reportId));
+            
+            if ( InvestigationForReportIdExist(reportId))
+            {
+                 await DeleteInvestation(GetInvestigationByReportId(reportId));
+            }
+        }
+
+
+        public async Task DeleteReport(Report report)
+        {
+            _appDbContext.Reports.Remove(report);
+            await _appDbContext.SaveChangesAsync();
         }
 
         public void UpdateReport(Report report)
@@ -110,7 +142,112 @@ namespace Nemesys.Models.Repositories
 
 
 
+        public ReportViewModel GetReportViewModelById(int reportId, UserManager<ApplicationUser> _userManager)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                Report report = GetReportById(reportId);
 
+                ReportViewModel ReportVM = new ReportViewModel
+                {
+                    Id = report.Id,
+                    CreatedDate = report.CreatedDate,
+                    Date = report.Date,
+                    Title = report.Title,
+                    Description = report.Description,
+                    Location = report.Location,
+                    ReporterInformations = report.ReporterInformations,
+                    ImageUrl = report.ImageUrl,
+                    Upvotes = report.Upvotes,
+
+                    TypeOfHazard = new TypeOfHazardViewModel()
+                    {
+                        Id = report.TypeOfHazard.Id,
+                        Name = report.TypeOfHazard.Name
+                    },
+
+                    Status = new StatusViewModel()
+                    {
+                        Id = report.Status.Id,
+                        Name = report.Status.Name
+                    },
+                    
+                    Author = new AuthorViewModel()
+                    {
+                        Id = report.UserId,
+                        Name = (_userManager.FindByIdAsync(report.UserId).Result != null) ? _userManager.FindByIdAsync(report.UserId).Result.UserName : "Anonymous"
+                    },
+                };
+
+                if (InvestigationForReportIdExist(reportId) == true)
+                {
+                    ReportVM.Investigation = GetInvestigationForReportId(reportId);
+                }
+            
+                return ReportVM;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+
+
+
+
+
+
+        /*
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * INVESTIGATION
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
+
+        public InvestigationViewModel GetInvestigationForReportId(int reportId)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                Investigation investigation = _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.ReportId == reportId);
+
+                InvestigationViewModel InvestigationVM = new InvestigationViewModel
+                {
+                    Id = investigation.Id,
+                    DateOfAction = investigation.DateOfAction,
+                    Description = investigation.Description,
+                    InvestigatorDetails = investigation.InvestigatorDetails
+                };
+
+                return InvestigationVM;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public async Task DeleteInvestation(Investigation investigation)
+        {
+            _appDbContext.Investigations.Remove(investigation);
+            await _appDbContext.SaveChangesAsync();
+        }
 
         public IEnumerable<Investigation> GetAllInvestigations()
         {
@@ -139,13 +276,27 @@ namespace Nemesys.Models.Repositories
             }
         }
 
+        public Investigation GetInvestigationByReportId(int reportId)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.ReportId == reportId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
 
         public InvestigationViewModel GetInvestigationViewModelById(int investigationId)
         {
             try
             {
                 //Using Eager loading with Include
-                Investigation investigation =  _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.Id == investigationId);
+                Investigation investigation = _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.Id == investigationId);
 
                 InvestigationViewModel InvestigationVM = new InvestigationViewModel
                 {
@@ -164,17 +315,36 @@ namespace Nemesys.Models.Repositories
             }
         }
 
+        public bool InvestigationForReportIdExist(int reportId)
+        {
+            //Using Eager loading with Include
+            Investigation investigation = _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.ReportId == reportId);
 
+            if (investigation == null)
+            {
+                return false;
+            }
 
-
-
+            return true;
+        }
 
         public void CreateInvestigation(Investigation investigation)
         {
             try
             {
-                _appDbContext.Investigations.Add(investigation);
-                _appDbContext.SaveChanges();
+                Console.WriteLine("a");
+                if (InvestigationForReportIdExist(investigation.ReportId) == false)
+                {
+                    Console.WriteLine("b");
+                    _appDbContext.Investigations.Add(investigation);
+                    Console.WriteLine("c");
+                    _appDbContext.SaveChanges();
+                    Console.WriteLine("ajout inv : ");
+                }
+                else
+                {
+                    Console.WriteLine("une investigation existe deja pour reportId : " + investigation.ReportId);
+                }
             }
             catch (Exception ex)
             {
@@ -209,6 +379,28 @@ namespace Nemesys.Models.Repositories
         }
 
 
+
+
+
+
+
+
+        /*
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * STATUS 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
         public IEnumerable<Status> GetAllStatus()
         {
             try
@@ -237,6 +429,28 @@ namespace Nemesys.Models.Repositories
             }
         }
 
+
+
+
+
+        /*
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * TYPE OF HAZARD 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         * 
+         */
         public IEnumerable<TypeOfHazard> GetAllTypesOfHazard()
         {
             try
@@ -274,6 +488,36 @@ namespace Nemesys.Models.Repositories
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
+         * 
+         * 
+         * 
+         * 
+         * BLOGGY
+         * 
+         * 
+         * 
+         */
 
         public IEnumerable<Category> GetAllCategories()
         {

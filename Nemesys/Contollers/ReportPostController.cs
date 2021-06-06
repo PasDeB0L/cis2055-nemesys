@@ -20,7 +20,7 @@ namespace Nemesys.Contollers
         private readonly INemesysRepository _nemesysRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly ILogger<ReportPostController> _logger;
-
+        
 
         public ReportPostController(
             INemesysRepository nemesysRepository,
@@ -32,10 +32,36 @@ namespace Nemesys.Contollers
             _logger = logger;
         }
 
+        [HttpGet]
+        public async Task<string> GetCurrentUserId()
+        {
+            ApplicationUser usr = await GetCurrentUserAsync();
+            return usr?.Id;
+        }
+
+        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+
+
         public async Task<IActionResult> IndexAsync()
         {
             try
             {
+                /*
+                Investigation inv = new Investigation()
+                {
+                    DateOfAction = DateTime.UtcNow,
+                    Description = "The electrician was there and he fixed the electricity probleme",
+                    InvestigatorDetails = "test@gmail",
+                    StatusId = 4,
+                    ReportId = 3,
+                    UserId = "test@gmail"
+                };
+
+                Console.WriteLine("1");
+                _nemesysRepository.CreateInvestigation(inv);
+                Console.WriteLine("2 ");
+                */
+
                 var model = new ReportListViewModel()
                 {
                     TotalEntries = _nemesysRepository.GetAllReports().Count(),
@@ -55,9 +81,6 @@ namespace Nemesys.Contollers
                         ImageUrl = b.ImageUrl,
                         Upvotes = b.Upvotes,
 
-                        //Investigation = b.Investation,
-
-
                         Status = new StatusViewModel()
                         {
                             Id = b.Status.Id,
@@ -73,10 +96,6 @@ namespace Nemesys.Contollers
                             Id = b.UserId,
                             Name = (_userManager.FindByIdAsync(b.UserId).Result != null) ? _userManager.FindByIdAsync(b.UserId).Result.UserName : "Anonymous"
                         },
-
-                        //Investigation = _nemesysRepository.GetInvestigationViewModelById(b.InvestationId)
-
-                        //Investigation = _nemesysRepository.GetInvestigationViewModelById(b.Id)
 
                     })
 
@@ -97,14 +116,7 @@ namespace Nemesys.Contollers
             }
         }
 
-        [HttpGet]
-        public async Task<string> GetCurrentUserId()
-        {
-            ApplicationUser usr = await GetCurrentUserAsync();
-            return usr?.Id;
-        }
-
-        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+       
 
         public IActionResult Details(int id)
         {
@@ -126,8 +138,7 @@ namespace Nemesys.Contollers
                         ReporterInformations = b.ReporterInformations,
                         ImageUrl = b.ImageUrl,
                         Upvotes = b.Upvotes,
-                        //Investigation = b.Investation,
-                        //Investigation = _nemesysRepository.GetInvestigationViewModelById(b.Id),
+                        
 
 
                         Status = new StatusViewModel()
@@ -225,7 +236,6 @@ namespace Nemesys.Contollers
                         ReporterInformations = _userManager.GetUserId(User), // modifier
                         ImageUrl = "/images/blogposts/" + fileName, // changer en reports apres
                         Upvotes = 0,
-                        //InvestationId = false,
                         StatusId = 3, // 3 = open 
                         TypeOfHazardId = newReport.TypeOfHazardId,
                         UserId = _userManager.GetUserId(User)
@@ -441,6 +451,46 @@ namespace Nemesys.Contollers
                 return View("Error");
             }
         }
+
+
+        [HttpGet]
+        [Authorize]
+        public IActionResult Delete(int id)
+        {
+            try 
+            {
+                var model = _nemesysRepository.GetReportViewModelById(id, _userManager);
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+                return View("Error");
+            }
+        }
+
+
+
+        [HttpPost, ActionName("Delete")]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmedAsync(int id )
+        {
+            try
+            {
+                await _nemesysRepository.DeleteReport(id);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+                return View("Error");
+            }
+        }
+        
+
+
 
 
         public IActionResult HallOfFame()
