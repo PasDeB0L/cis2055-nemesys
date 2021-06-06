@@ -248,7 +248,7 @@ namespace Nemesys.Models
                         Description = "test invest",
                         InvestigatorDetails = user.Email,
                         StatusId = 4,
-                        ReportId = 5,
+                        ReportId = 8,
                         UserId = user.Id
                     }
                 );

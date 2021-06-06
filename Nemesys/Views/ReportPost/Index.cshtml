@@ -37,7 +37,7 @@
 
                 @if (@report.Status.Name.Equals("Open"))
                 {
-                    @if (@report.Status.Name.Equals("Open")) // User.IsInRole("Administrator")
+                    @if (User.IsInRole("Administrator")) //  @report.Status.Name.Equals("Open")
                     {
                         <a asp-controller="ReportPost" asp-action="Investigation" asp-route-id="@report.Id" class="btn btn-primary">Investigate</a>
                     }

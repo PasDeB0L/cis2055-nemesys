@@ -453,6 +453,25 @@ namespace Nemesys.Contollers
         }
 
 
+
+
+        [HttpGet]
+        public IActionResult Investigation(int id)
+        {
+            try
+            {
+                var model = _nemesysRepository.GetReportViewModelById(id, _userManager);
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+                return View("Error");
+            }
+        }
+
+
         [HttpGet]
         [Authorize]
         public IActionResult Delete(int id)
@@ -470,6 +489,7 @@ namespace Nemesys.Contollers
             }
         }
 
+        
 
 
         [HttpPost, ActionName("Delete")]
