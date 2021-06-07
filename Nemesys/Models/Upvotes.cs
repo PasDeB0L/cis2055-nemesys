@@ -20,4 +20,4 @@ namespace Nemesys.Models
         public ApplicationUser User { get; set; }
     }
 }
-}
+
