@@ -31,6 +31,23 @@ namespace Nemesys
                     DbInitializer.SeedUsers(userManager);
                     DbInitializer.SeedData(userManager, context);
 
+                    /*
+                    var user = userManager.GetUsersInRoleAsync("User").Result.FirstOrDefault();
+
+                    context.AddRange
+                    (
+                        new Investigation()
+                        {
+                            DateOfAction = DateTime.UtcNow,
+                            Description = "investion test",
+                            InvestigatorDetails = user.Email,
+                            StatusId = 4,
+                            ReportId = 3,
+                            UserId = user.Id
+                        }
+                    );
+                    context.SaveChanges();*/
+
                 }
                 catch (Exception ex)
                 {

@@ -481,3 +481,15 @@ C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\Microsoft.AspNe
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation.dll
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\Microsoft.Extensions.DependencyModel.dll
 C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\bin\Debug\net5.0\Microsoft.Extensions.FileProviders.Embedded.dll
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\InvestigationPost\Create.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\InvestigationPost\Edit.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\InvestigationPost\Index.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Create.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Dashboard.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Details.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Edit.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Index.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\InvestigationPost\Dashboard.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\HallOfFame.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Delete.cshtml.g.cs
+C:\Users\33607\Documents\GitHub\NEMESYS\Nemesys\obj\Debug\net5.0\Razor\Views\ReportPost\Investigation.cshtml.g.cs

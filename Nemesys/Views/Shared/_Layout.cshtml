@@ -24,11 +24,34 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="About">About</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ReportPost" asp-action="Index">Reports</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="InvestigationPost" asp-action="Index">Investigations</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-controller="ReportPost" asp-action="Create">Create New Report</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="ReportPost" asp-action="HallOfFame">Hall of fame</a>
+                        </li>
+
+
+
+                        <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="BlogPost" asp-action="Index">Blogs</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="BlogPost" asp-action="Create">Create New</a>
+                            <a class="nav-link text-dark" asp-controller="BlogPost" asp-action="Create">New Blog</a>
                         </li>
+
+
+
+
+
+
+
+
                         @if (User.IsInRole("Administrator"))
                         {
                             <li class="nav-item">

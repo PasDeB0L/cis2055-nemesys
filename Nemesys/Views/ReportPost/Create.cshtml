@@ -1,0 +1,61 @@
+﻿@model Nemesys.ViewModels.EditReportViewModel
+
+<h2>Create Report Post</h2>
+
+<form asp-action="Create" method="post" role="form" enctype="multipart/form-data">
+    <div asp-validation-summary="All" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="Title" class="col-md-2"></label>
+        <div class="col-md-5">
+            <input asp-for="Title" class="form-control" />
+            <span asp-validation-for="Title" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="TypeOfHazardId" class="col-md-2"></label>
+        <div class="col-md-5">
+            <select asp-for="TypeOfHazardId"
+                    asp-items="@(new SelectList(Model.TypeOfHazardList,"Id","Name"))">
+                <option value="">Select a category</option>
+            </select>
+            <span asp-validation-for="TypeOfHazardId" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Description" class="col-md-2"></label>
+        <div class="col-md-5">
+            <textarea asp-for="Description" class="form-control"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Location" class="col-md-2"></label>
+        <div class="col-md-5">
+            <textarea asp-for="Location" class="form-control"></textarea>
+            <span asp-validation-for="Location" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="Date" class="col-md-2"></label>
+        <div class="col-md-5">
+            <input asp-for="Date" class="form-control" />
+            <span asp-validation-for="Date" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <label asp-for="ImageToUpload" class="col-md-2"></label>
+        <div class="col-md-5">
+            <input type="file" asp-for="ImageToUpload" class="form-control" />
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="col-md-5">
+            <input type="submit" class="btn btn-primary" value="Create Report Post" />
+            <a asp-controller="ReportPost" asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+        </div>
+    </div>
+</form>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}
