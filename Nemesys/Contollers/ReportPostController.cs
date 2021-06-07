@@ -379,6 +379,7 @@ namespace Nemesys.Contollers
         }
 
 
+<<<<<<< HEAD
 
 
         [HttpGet]
@@ -400,6 +401,8 @@ namespace Nemesys.Contollers
         }
 
 
+=======
+>>>>>>> parent of 309b884 (add View/Report/Investigation)
         [HttpGet]
         [Authorize]
         public IActionResult Delete(int id)
@@ -417,7 +420,6 @@ namespace Nemesys.Contollers
             }
         }
 
-        
 
 
         [HttpPost, ActionName("Delete")]
