@@ -30,7 +30,7 @@
                 </p>
 
 
-                @if (1 == 1) // regarder si le user a pas deja upvote pour ce report
+                @if (!@report.Status.Name.Equals("Closed")) // regarder si le user a pas deja upvote pour ce report
                 {
                     <a asp-controller="ReportPost" asp-action="Upvote" asp-route-id="@report.Id" class="btn btn-primary">Upvote</a>
                 }
@@ -48,11 +48,10 @@
                 }
  
                 @if (@report.Author.Id.Equals(@ViewData["User"]))
-                {
+                 {
                     <a asp-controller="ReportPost" asp-action="Delete" asp-route-id="@report.Id" class="btn btn-primary">Delete</a>
                     <a asp-controller="ReportPost" asp-action="Edit" asp-route-id="@report.Id" class="btn btn-primary">Edit</a>
-                }
-
+                 }
             </div>
         </div>
     }

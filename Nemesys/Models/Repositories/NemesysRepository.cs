@@ -558,24 +558,27 @@ namespace Nemesys.Models.Repositories
          */
         public void CreateInvestigation(Investigation investigation)
         {
-            
             try
             {
-                Console.WriteLine(8);
                 if (InvestigationForReportIdExist(investigation.ReportId) == false)
                 {
                     _appDbContext.Investigations.Add(investigation);
-                    _appDbContext.SaveChanges();
-                    Console.WriteLine("ajout a la bdd");
+
+                    var existingReport = _appDbContext.Reports.SingleOrDefault(bp => bp.Id == investigation.ReportId);
+                    if (existingReport != null)
+                    {
+                        existingReport.StatusId = investigation.StatusId;
+
+                        _appDbContext.Entry(existingReport).State = EntityState.Modified;
+                        _appDbContext.SaveChanges();
+                    }
                 }
             }
             catch (Exception ex)
             {
-                Console.WriteLine(9);
                 _logger.LogError(ex.Message);
                 throw;
             }
-            Console.WriteLine(10);
         }
 
         public void UpdateInvestigation(Investigation updatedInvestigation)
