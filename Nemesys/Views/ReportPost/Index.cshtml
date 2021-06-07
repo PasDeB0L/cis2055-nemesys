@@ -1,7 +1,9 @@
 ﻿@model Nemesys.ViewModels.ReportListViewModel
 
 @using Microsoft.AspNetCore.Identity
+@using Nemesys.Models.Interfaces
 @inject UserManager<Nemesys.Models.ApplicationUser> UserManager
+@inject INemesysRepository _nemesysRepository;
 
 
 @{
@@ -26,13 +28,17 @@
                     Type of hazard  : @report.TypeOfHazard.Name<br>
                     Status : @report.Status.Name<br>
                     Upvotes : @report.Upvotes<br>
-                    by @report.ReporterInformations @report.CreatedDate.ToShortDateString()
+                    Creation date : @report.CreatedDate.ToShortDateString() <br>
+                    By @report.ReporterInformations
                 </p>
 
 
                 @if (!@report.Status.Name.Equals("Closed")) // regarder si le user a pas deja upvote pour ce report
                 {
-                    <a asp-controller="ReportPost" asp-action="Upvote" asp-route-id="@report.Id" class="btn btn-primary">Upvote</a>
+                    if (_nemesysRepository.UserUpvotes( @User.Identity.Name ))
+                    {
+                        <a asp-controller="ReportPost" asp-action="Upvote" asp-route-id="@report.Id" class="btn btn-primary">Upvote</a>
+                    }
                 }
 
                 @if (@report.Status.Name.Equals("Open"))
@@ -46,12 +52,12 @@
                 {
                     <a asp-controller="ReportPost" asp-action="Investigation" asp-route-id="@report.Id" class="btn btn-primary">Investigation</a>
                 }
- 
+
                 @if (@report.Author.Id.Equals(@ViewData["User"]))
-                 {
+                {
                     <a asp-controller="ReportPost" asp-action="Delete" asp-route-id="@report.Id" class="btn btn-primary">Delete</a>
                     <a asp-controller="ReportPost" asp-action="Edit" asp-route-id="@report.Id" class="btn btn-primary">Edit</a>
-                 }
+                }
             </div>
         </div>
     }

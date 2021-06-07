@@ -1,5 +1,41 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿@model Nemesys.ViewModels.InvestigationViewModel
+
+
+
+<h1>Investigation Details</h1>
+<div class="card" style="width: 90%;padding:20px; margin:20px;">
+
+    <div class="card" style="width: 90%;padding:20px; margin:20px;">
+        <div class="card-body">
+            <p class="card-text">Date of Action : @Model.DateOfAction</p>
+            <p class="small">Description : @Model.Description</p>
+            <p class="small">Investigator details  : @Model.InvestigatorDetails</p>
+        </div>
+    </div>
+
+
+
+    <div class="card" style="width: 90%;padding:20px; margin:20px;">
+        <h2>Report</h2>
+        <div class="card-body">
+            <h3 class="card-title">@Model.Report.Title</h3>
+            <p class="card-text">Date of the hazard @Model.Report.Date.ToShortDateString()</p>
+            <p class="small">Description : @Model.Report.Description</p>
+            <p class="small">Location : @Model.Report.Location</p>
+            <p class="small">Type of hazard  : @Model.Report.TypeOfHazard.Name</p>
+            <p class="small">Status : @Model.Report.Status.Name</p>
+            <p class="small">Upvotes : @Model.Report.Upvotes</p>
+            <p class="small">By @Model.Report.ReporterInformations</p>
+            <p class="small">Create date: @Model.Report.CreatedDate.ToShortDateString() </p>
+            <p class="small"></p>
+        </div>
+        <img class="card-img-top" src="@Model.Report.ImageUrl" alt="Image for @Model.Report.Title" />
+    </div>
+
+    <form asp-action="Delete">
+        <a asp-controller="InvestigationPost" asp-action="Index" class="btn btn-primary">Back to investigations</a>
+        <input type="hidden" asp-for="Id" />
+        <input type="submit" value="Delete" class="btn btn-danger" />
+    </form>
+</div>
+

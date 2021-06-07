@@ -34,7 +34,10 @@ namespace Nemesys.Models.Repositories
 
 
 
-
+        public bool UserUpvotes(string IdentityName)
+        {
+            return true;
+        }
 
 
         /*
@@ -199,15 +202,12 @@ namespace Nemesys.Models.Repositories
 
         public ReportListViewModel GetReportListViewModel()
         {
-           
             IEnumerable<Report> AllReports = GetAllReports();
-
             
             return new ReportListViewModel
             {
                 TotalEntries = AllReports.Count(),
                 Reports = GetAllReportsViewModel(AllReports)
-
             };
         }
 
@@ -261,6 +261,7 @@ namespace Nemesys.Models.Repositories
             if ( InvestigationForReportIdExist(report.Id) )
             {
                 reportVM.Investigation = GetInvestigationViewModel(GetInvestigationByReportId(report.Id));
+
             }
 
             return reportVM;
@@ -470,6 +471,17 @@ namespace Nemesys.Models.Repositories
             };
         }
 
+
+        public  InvestigationViewModel GetInvestigationViewModel(int id)
+        {
+            InvestigationViewModel invVM = GetInvestigationViewModel( GetInvestigationById(id) );
+            invVM.Report = GetReportViewModelById(invVM.Report.Id);
+            return invVM;
+        }
+
+
+
+
         public InvestigationViewModel GetInvestigationViewModel(Investigation investigation)
         {
             return new InvestigationViewModel
@@ -477,9 +489,14 @@ namespace Nemesys.Models.Repositories
                 Id = investigation.Id,
                 DateOfAction = investigation.DateOfAction,
                 Description = investigation.Description,
-                InvestigatorDetails = investigation.InvestigatorDetails                
+                InvestigatorDetails = investigation.InvestigatorDetails,
+                Report = new ReportViewModel
+                {
+                    Id = investigation.ReportId
+                }
             };
         }
+        
 
 
 
@@ -488,7 +505,9 @@ namespace Nemesys.Models.Repositories
             try
             {
                 //Using Eager loading with Include
-                return _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.Id == investigationId);
+                Investigation inv =   _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.Id == investigationId);
+                inv.Report = GetReportById(inv.ReportId);
+                return inv;
             }
             catch (Exception ex)
             {
@@ -586,6 +605,7 @@ namespace Nemesys.Models.Repositories
             try
             {
                 var existingInvestigation = _appDbContext.Investigations.SingleOrDefault(bp => bp.Id == updatedInvestigation.Id);
+                
                 if (existingInvestigation != null)
                 {
                     existingInvestigation.Description = updatedInvestigation.Description;
@@ -593,8 +613,16 @@ namespace Nemesys.Models.Repositories
                     existingInvestigation.InvestigatorDetails = updatedInvestigation.InvestigatorDetails;
                     existingInvestigation.StatusId = updatedInvestigation.StatusId;
 
-                    _appDbContext.Entry(existingInvestigation).State = EntityState.Modified;
-                    _appDbContext.SaveChanges();
+
+                    var existingReport = _appDbContext.Reports.SingleOrDefault(bp => bp.Id == existingInvestigation.ReportId);
+                    if (existingReport != null)
+                    {
+                        existingReport.StatusId = existingInvestigation.StatusId;
+
+                        _appDbContext.Entry(existingInvestigation).State = EntityState.Modified;
+                        _appDbContext.Entry(existingReport).State = EntityState.Modified;
+                        _appDbContext.SaveChanges();
+                    }                   
                 }
             }
             catch (Exception ex)

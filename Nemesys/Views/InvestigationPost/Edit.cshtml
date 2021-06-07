@@ -8,63 +8,64 @@
 
     <input asp-for="Id" type="hidden" class="form-control" />
 
-    <div class="form-group">
-        <label asp-for="Title" class="col-md-2"></label>
-        <div class="col-md-5">
-            <input asp-for="Title" class="form-control" />
-            <span asp-validation-for="Title" class="text-danger"></span>
+
+    <div class="card" style="width: 90%;padding:20px; margin:20px;">
+
+       
+        <div class="form-group">
+            <label asp-for="StatusId" class="col-md-2"></label>
+            <div class="col-md-5">
+                <select asp-for="StatusId"
+                        asp-items="@(new SelectList(Model.StatusList,"Id","Name"))">
+                    <option value="">Select a category</option>
+                </select>
+                <span asp-validation-for="StatusId" class="text-danger"></span>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="TypeOfHazardId" class="col-md-2"></label>
-        <div class="col-md-5">
-            <select asp-for="TypeOfHazardId"
-                    asp-items="@(new SelectList(Model.TypeOfHazardList,"Id","Name"))">
-                <option value="">Select a category</option>
-            </select>
-            <span asp-validation-for="TypeOfHazardId" class="text-danger"></span>
+        <div class="form-group">
+            <label asp-for="Description" class="col-md-2"></label>
+            <div class="col-md-5">
+                <textarea asp-for="Description" class="form-control"></textarea>
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="Description" class="col-md-2"></label>
-        <div class="col-md-5">
-            <textarea asp-for="Description" class="form-control"></textarea>
-            <span asp-validation-for="Description" class="text-danger"></span>
+        
+        <div class="form-group">
+            <label asp-for="DateOfAction" class="col-md-2"></label>
+            <div class="col-md-5">
+                <input asp-for="DateOfAction" class="form-control" />
+                <span asp-validation-for="DateOfAction" class="text-danger"></span>
+            </div>
         </div>
-    </div>
-    <div class="form-group">
-        <label asp-for="Location" class="col-md-2"></label>
-        <div class="col-md-5">
-            <textarea asp-for="Location" class="form-control"></textarea>
-            <span asp-validation-for="Location" class="text-danger"></span>
+
+
+
+        <div class="card" style="width: 90%;padding:20px; margin:20px;">
+            <h2>@Model.Report.Title</h2>
+            <img class="card-img-top" src="@Model.Report.ImageUrl" alt="Image for @Model.Report.Title" />
+            <div class="card-body">
+                <h3 class="card-title">@Model.Report.Title</h3>
+                <p class="card-text">Date of the hazard @Model.Report.Date.ToShortDateString()</p>
+                <p class="small">Description : @Model.Description</p>
+                <p class="small">Location : @Model.Report.Location</p>
+                <p class="small">Type of hazard  : @Model.Report.TypeOfHazard.Name</p>
+                <p class="small">Status : @Model.Report.Status.Name</p>
+                <p class="small">Upvotes : @Model.Report.Upvotes</p>
+                <p class="small">By @Model.Report.ReporterInformations</p>
+                <p class="small">Create date: @Model.Report.CreatedDate.ToShortDateString() </p>
+                <p class="small"></p>
+
+            </div>
         </div>
     </div>
 
 
-    <div class="form-group">
-        <label asp-for="Date" class="col-md-2"></label>
-        <div class="col-md-5">
-            <input asp-for="Date" class="form-control" />
-            <span asp-validation-for="Date" class="text-danger"></span>
+        <div class="form-group">
+            <div class="col-md-5">
+                <input type="submit" class="btn btn-primary" value="Update Report Post" />
+                <a asp-controller="ReportPost" asp-action="Index" class="btn btn-outline-secondary">Back to Reports</a>
+            </div>
         </div>
-    </div>
-
-
-    <div class="form-group">
-        <img src="@Model.ImageUrl" class="col-md-5" />
-    </div>
-    <div class="form-group">
-        <label asp-for="ImageToUpload" class="col-md-2"></label>
-        <div class="col-md-5">
-            <input type="file" asp-for="ImageToUpload" class="form-control" />
-        </div>
-    </div>
-    <div class="form-group">
-        <div class="col-md-5">
-            <input type="submit" class="btn btn-primary" value="Update Report Post" />
-            <a asp-controller="ReportPost" asp-action="Index" class="btn btn-outline-secondary">Back to Reports</a>
-        </div>
-    </div>
 </form>
 
 
