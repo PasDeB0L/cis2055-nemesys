@@ -10,20 +10,20 @@ namespace Nemesys.Models
     {
         public int Id { get; set; }
         
+
+
         public DateTime DateOfAction { get; set; }
         public string Description { get; set; }
         public string InvestigatorDetails { get; set; }
         public int StatusId { get; set; }
+        public int ReportId { get; set; } //Foreign Key - navigation property name + key property name
+        public string UserId { get; set; } //Foreign Key - navigation property name + key property name
+
+
+
         
+        public Report Report { get; set; } //Reference navigation property
+        public ApplicationUser User { get; set; }  //Reference navigation property
 
-
-        public int ReportId { get; set; }
-        //Reference navigation property
-        public Report Report { get; set; }
-
-        //Foreign Key - navigation property name + key property name
-        public string UserId { get; set; }
-        //Reference navigation property
-        public ApplicationUser User { get; set; }
     }
 }

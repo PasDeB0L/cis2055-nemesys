@@ -25,25 +25,24 @@ else
  {
     <div class="card" style="width: 18rem;padding:20px; margin:20px;">
 
-        <h3 class="card-title">@investigation.Report.Status.Name</h3>
-        <h4 class="card-title">@investigation.Report.TypeOfHazard.Name</h4>
+        <h4 class="card-title">Status : @investigation.Report.Status.Name</h4>
+        <h4 class="card-title">ToH : @investigation.Report.TypeOfHazard.Name</h4>
         <p class="small">
             Creation date : @investigation.DateOfAction <br>
             Description : @investigation.Description <br>
         </p>
 
         <div class="row">
-            <h3 class="card-title">Report</h3>
+            <h5 class="card-title">Report</h5>
 
-            <img class="card-img-top" src="@@investigation.report.ImageUrl" alt="Image for @@investigation.report.Title" />
+            <img class="card-img-top" src="@investigation.Report.ImageUrl" alt="Image for @investigation.Report.Title" />
             <div class="card-body">
-                <h3 class="card-title">@@investigation.report.Title</h3>
+                <h3 class="card-title">@investigation.Report.Title</h3>
                 <p class="small">
-                    @@investigation.report.Date.ToShortDateString() <br>
-                    Location : @@investigation.report.Location<br>
-                    Type of hazard  : @@investigation.report.TypeOfHazard.Name<br>
-                    Upvotes : @@investigation.report.Upvotes<br>
-                    by @@investigation.report.Author.Name
+                    @investigation.Report.Date.ToShortDateString() <br>
+                    Location : @investigation.Report.Location<br>
+                    Type of hazard  : @investigation.Report.TypeOfHazard.Name<br>
+                    Upvotes : @investigation.Report.Upvotes<br>
                 </p>
             </div>
         </div>

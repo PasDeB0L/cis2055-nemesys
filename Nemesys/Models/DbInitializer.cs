@@ -235,11 +235,21 @@ namespace Nemesys.Models
             }
 
 
+
+
+
+
             if (!context.Investigations.Any())
             {
                 //Grabbing first one
                 var user = userManager.GetUsersInRoleAsync("User").Result.FirstOrDefault();
+                
+                
+                
 
+
+
+                /*
                 context.AddRange
                 (
                     new Investigation()
@@ -248,11 +258,16 @@ namespace Nemesys.Models
                         Description = "test invest",
                         InvestigatorDetails = user.Email,
                         StatusId = 4,
-                        ReportId = 5,
+                        ReportId = 1,
                         UserId = user.Id
                     }
                 );
                 context.SaveChanges();
+                */
+
+
+
+
             }
         }
     }

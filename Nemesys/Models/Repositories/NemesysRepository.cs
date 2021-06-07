@@ -199,10 +199,10 @@ namespace Nemesys.Models.Repositories
 
         public ReportListViewModel GetReportListViewModel()
         {
-            Console.WriteLine(3);
+           
             IEnumerable<Report> AllReports = GetAllReports();
 
-            Console.WriteLine("count "+AllReports.Count()) ;
+            
             return new ReportListViewModel
             {
                 TotalEntries = AllReports.Count(),
@@ -256,7 +256,12 @@ namespace Nemesys.Models.Repositories
                 TypeOfHazard = GetTypeOfHazardViewModel(report.TypeOfHazard),
                 Author = GetAuthorViewModel(report.UserId),
                 
-            };            
+            };    
+            
+            if ( InvestigationForReportIdExist(report.Id) )
+            {
+                reportVM.Investigation = GetInvestigationViewModel(GetInvestigationByReportId(report.Id));
+            }
 
             return reportVM;
         }
@@ -455,12 +460,6 @@ namespace Nemesys.Models.Repositories
 
         public InvestigationViewModel GetInvestigationViewModel(Investigation investigation, Report report)
         {
-            Console.WriteLine("id "+report.Id);
-            Console.WriteLine(investigation.Id);
-            Console.WriteLine(investigation.DateOfAction);
-            Console.WriteLine(investigation.Description);
-            Console.WriteLine(investigation.InvestigatorDetails);
-
             return new InvestigationViewModel
             {
                 Id = investigation.Id,
@@ -470,6 +469,18 @@ namespace Nemesys.Models.Repositories
                 Report = GetReportViewModel(report)
             };
         }
+
+        public InvestigationViewModel GetInvestigationViewModel(Investigation investigation)
+        {
+            return new InvestigationViewModel
+            {
+                Id = investigation.Id,
+                DateOfAction = investigation.DateOfAction,
+                Description = investigation.Description,
+                InvestigatorDetails = investigation.InvestigatorDetails                
+            };
+        }
+
 
 
         public Investigation GetInvestigationById(int investigationId)
@@ -491,9 +502,15 @@ namespace Nemesys.Models.Repositories
         {
             try
             {
-                //Using Eager loading with Include
-                return _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.ReportId == reportId);
+                if (InvestigationForReportIdExist(reportId))
+                {
+                    //Using Eager loading with Include
+                    return _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.ReportId == reportId);
+                }
+                else
+                    return null;
             }
+                
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);
@@ -514,6 +531,26 @@ namespace Nemesys.Models.Repositories
         }
 
 
+        public Investigation EditInvestigationViewModelToInvestigation(EditInvestigationViewModel editInvVM)
+        {
+            return new Investigation
+            {
+                DateOfAction = editInvVM.DateOfAction,
+                Description = editInvVM.Description,
+                InvestigatorDetails = editInvVM.Author.Name,
+                ReportId = editInvVM.Report.Id,
+                StatusId = editInvVM.StatusId,
+                UserId = editInvVM.Author.Id
+            };
+        }
+
+        public void CreateNewInvestigation(EditInvestigationViewModel editInvVM)
+        {
+            CreateInvestigation((EditInvestigationViewModelToInvestigation(editInvVM)));
+        }
+
+
+
         /*
          * 
          * dbo.Investigations UPDATES
@@ -521,19 +558,24 @@ namespace Nemesys.Models.Repositories
          */
         public void CreateInvestigation(Investigation investigation)
         {
+            
             try
             {
+                Console.WriteLine(8);
                 if (InvestigationForReportIdExist(investigation.ReportId) == false)
                 {
                     _appDbContext.Investigations.Add(investigation);
                     _appDbContext.SaveChanges();
+                    Console.WriteLine("ajout a la bdd");
                 }
             }
             catch (Exception ex)
             {
+                Console.WriteLine(9);
                 _logger.LogError(ex.Message);
                 throw;
             }
+            Console.WriteLine(10);
         }
 
         public void UpdateInvestigation(Investigation updatedInvestigation)

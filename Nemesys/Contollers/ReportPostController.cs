@@ -408,6 +408,12 @@ namespace Nemesys.Contollers
             {
                 var model = _nemesysRepository.GetReportViewModel(_nemesysRepository.GetReportById(id));
 
+                
+
+                Console.WriteLine("report id" + model.Id);
+                Console.WriteLine("report id" + model.Investigation);
+
+
                 return View(model);
             }
             catch (Exception ex)
