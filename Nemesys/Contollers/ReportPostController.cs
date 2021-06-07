@@ -410,10 +410,6 @@ namespace Nemesys.Contollers
 
                 
 
-                Console.WriteLine("report id" + model.Id);
-                Console.WriteLine("report id" + model.Investigation);
-
-
                 return View(model);
             }
             catch (Exception ex)

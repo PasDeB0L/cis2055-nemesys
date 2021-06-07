@@ -28,7 +28,7 @@ else
         <h4 class="card-title">Status : @investigation.Report.Status.Name</h4>
         <h4 class="card-title">ToH : @investigation.Report.TypeOfHazard.Name</h4>
         <p class="small">
-            Creation date : @investigation.DateOfAction <br>
+            Creation date : @investigation.DateOfAction.ToShortDateString() <br>
             Description : @investigation.Description <br>
         </p>
 
@@ -41,16 +41,14 @@ else
                 <p class="small">
                     @investigation.Report.Date.ToShortDateString() <br>
                     Location : @investigation.Report.Location<br>
-                    Type of hazard  : @investigation.Report.TypeOfHazard.Name<br>
                     Upvotes : @investigation.Report.Upvotes<br>
                 </p>
             </div>
         </div>
 
 
-        <a asp-controller="Investigation" asp-action="Details" asp-route-id="@investigation.Id" class="btn btn-primary">Details</a>
-        <a asp-controller="Investigation" asp-action="Edit" asp-route-id="@investigation.Id" class="btn btn-primary">Edit</a>
-        <a asp-controller="Investigation" asp-action="Delete" asp-route-id="@investigation.Id" class="btn btn-primary">Delete</a>
+        <a asp-controller="InvestigationPost" asp-action="Details" asp-route-id="@investigation.Id" class="btn btn-primary">Details</a>
+        <a asp-controller="InvestigationPost" asp-action="Edit" asp-route-id="@investigation.Id" class="btn btn-primary">Edit</a>
     </div>
   }
 

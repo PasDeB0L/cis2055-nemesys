@@ -11,8 +11,9 @@
 
 
 <h1>@Model.Title</h1>
+
 <div class="card" style="width: 90%;padding:20px; margin:20px;">
-    <img class="card-img-top" src="@Model.ImageUrl" alt="Image for @Model.Title" />
+
     <div class="card-body">
         <h3 class="card-title">@Model.Title</h3>
         <p class="card-text">Date of the hazard @Model.Date.ToShortDateString()</p>
@@ -24,8 +25,8 @@
         <p class="small">By @Model.ReporterInformations</p>
         <p class="small">Create date: @Model.CreatedDate.ToShortDateString() </p>
         <p class="small"></p>
-
     </div>
+    <img class="card-img-top" src="@Model.ImageUrl" alt="Image for @Model.Title" />
 </div>
 
 

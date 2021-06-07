@@ -9,6 +9,10 @@ namespace Nemesys.Models.Interfaces
 {
     public interface INemesysRepository
     {
+
+        bool UserUpvotes(string IdentityName );
+
+
         /*
         * REPORTS
         */
@@ -44,14 +48,16 @@ namespace Nemesys.Models.Interfaces
         InvestigationListViewModel GetInvestigationListViewModel(string userId);
         IEnumerable<InvestigationViewModel> GetAllInvestigationsViewModel(IEnumerable<Investigation> investigations);
         InvestigationViewModel GetInvestigationViewModel(Investigation investigation, Report report);
+        InvestigationViewModel GetInvestigationViewModel(int  id);
         InvestigationViewModel GetInvestigationViewModel(Investigation investigation);
         Investigation GetInvestigationById(int investigationId);
         Investigation GetInvestigationByReportId(int reportId);
-
         bool InvestigationForReportIdExist(int reportId);
-
         Investigation EditInvestigationViewModelToInvestigation(EditInvestigationViewModel editInvVM);
         void CreateNewInvestigation(EditInvestigationViewModel editInvVM);
+
+
+
 
         /*
          * dbo.Investigations UPDATES
