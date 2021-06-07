@@ -1,5 +1,58 @@
-﻿@model Nemesys.ViewModels.BlogPostListViewModel
+﻿@model Nemesys.ViewModels.InvestigationListViewModel
 
 
-<h1>Investigations</h1>
+@using Microsoft.AspNetCore.Identity
+@inject UserManager<Nemesys.Models.ApplicationUser> UserManager
 
+
+@if (@Model.TotalEntries>1)
+{
+    ViewData["Investigation"] = "investigations";
+}
+else
+{
+    ViewData["Investigation"] = "investigation";
+}
+
+
+<h1>Your Investigations</h1>
+
+
+<h2>You have done @Model.TotalEntries @ViewData["Investigation"]</h2>
+
+<div class="row">
+ @foreach (var investigation in Model.Investigations)
+ {
+    <div class="card" style="width: 18rem;padding:20px; margin:20px;">
+
+        <h3 class="card-title">@investigation.Report.Status.Name</h3>
+        <h4 class="card-title">@investigation.Report.TypeOfHazard.Name</h4>
+        <p class="small">
+            Creation date : @investigation.DateOfAction <br>
+            Description : @investigation.Description <br>
+        </p>
+
+        <div class="row">
+            <h3 class="card-title">Report</h3>
+
+            <img class="card-img-top" src="@@investigation.report.ImageUrl" alt="Image for @@investigation.report.Title" />
+            <div class="card-body">
+                <h3 class="card-title">@@investigation.report.Title</h3>
+                <p class="small">
+                    @@investigation.report.Date.ToShortDateString() <br>
+                    Location : @@investigation.report.Location<br>
+                    Type of hazard  : @@investigation.report.TypeOfHazard.Name<br>
+                    Upvotes : @@investigation.report.Upvotes<br>
+                    by @@investigation.report.Author.Name
+                </p>
+            </div>
+        </div>
+
+
+        <a asp-controller="Investigation" asp-action="Details" asp-route-id="@investigation.Id" class="btn btn-primary">Details</a>
+        <a asp-controller="Investigation" asp-action="Edit" asp-route-id="@investigation.Id" class="btn btn-primary">Edit</a>
+        <a asp-controller="Investigation" asp-action="Delete" asp-route-id="@investigation.Id" class="btn btn-primary">Delete</a>
+    </div>
+  }
+
+</div>

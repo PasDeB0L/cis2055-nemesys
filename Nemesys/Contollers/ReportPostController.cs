@@ -46,66 +46,9 @@ namespace Nemesys.Contollers
         {
             try
             {
-                /*
-                Investigation inv = new Investigation()
-                {
-                    DateOfAction = DateTime.UtcNow,
-                    Description = "The electrician was there and he fixed the electricity probleme",
-                    InvestigatorDetails = "test@gmail",
-                    StatusId = 4,
-                    ReportId = 3,
-                    UserId = "test@gmail"
-                };
-
-                Console.WriteLine("1");
-                _nemesysRepository.CreateInvestigation(inv);
-                Console.WriteLine("2 ");
-                */
-
-                var model = new ReportListViewModel()
-                {
-                    TotalEntries = _nemesysRepository.GetAllReports().Count(),
-
-                    Reports = _nemesysRepository
-                    .GetAllReports()
-                    .OrderByDescending(b => b.CreatedDate)
-                    .Select(b => new ReportViewModel
-                    {
-                        Id = b.Id,
-                        CreatedDate = b.CreatedDate,
-                        Date = b.Date,
-                        Title = b.Title,
-                        Description = b.Description,
-                        Location = b.Location,
-                        ReporterInformations = b.ReporterInformations,
-                        ImageUrl = b.ImageUrl,
-                        Upvotes = b.Upvotes,
-
-                        Status = new StatusViewModel()
-                        {
-                            Id = b.Status.Id,
-                            Name = b.Status.Name
-                        },
-                        TypeOfHazard = new TypeOfHazardViewModel()
-                        {
-                            Id = b.TypeOfHazard.Id,
-                            Name = b.TypeOfHazard.Name
-                        },
-                        Author = new AuthorViewModel()
-                        {
-                            Id = b.UserId,
-                            Name = (_userManager.FindByIdAsync(b.UserId).Result != null) ? _userManager.FindByIdAsync(b.UserId).Result.UserName : "Anonymous"
-                        },
-
-                    })
-
-                    
-                };
-
-                 
-
+                var model = _nemesysRepository.GetReportListViewModel();
+                
                 ViewData["User"] = await GetCurrentUserId();
-
 
                 return View(model);
             }
@@ -116,7 +59,6 @@ namespace Nemesys.Contollers
             }
         }
 
-       
 
         public IActionResult Details(int id)
         {
@@ -151,12 +93,13 @@ namespace Nemesys.Contollers
                             Id = b.TypeOfHazard.Id,
                             Name = b.TypeOfHazard.Name
                         },
-
+                        /*
                         Author = new AuthorViewModel()
                         {
                             Id = b.UserId,
                             Name = (_userManager.FindByIdAsync(b.UserId).Result != null) ? _userManager.FindByIdAsync(b.UserId).Result.UserName : "Anonymous"
                         }
+                        */
 
                     };
 
@@ -226,24 +169,8 @@ namespace Nemesys.Contollers
                     }
 
 
-                    Report report = new Report()
-                    {
-                        CreatedDate = DateTime.UtcNow,
-                        Date = newReport.Date,
-                        Title = newReport.Title,
-                        Description = newReport.Description,
-                        Location = newReport.Location,
-                        ReporterInformations = _userManager.GetUserId(User), // modifier
-                        ImageUrl = "/images/blogposts/" + fileName, // changer en reports apres
-                        Upvotes = 0,
-                        StatusId = 3, // 3 = open 
-                        TypeOfHazardId = newReport.TypeOfHazardId,
-                        UserId = _userManager.GetUserId(User)
-                        
-                    };
+                    _nemesysRepository.CreateReport(newReport.Title, newReport.Description, newReport.Location, fileName, newReport.TypeOfHazardId, newReport.StatusId, newReport.Date, _userManager.GetUserId(User), _userManager.GetUserId(User));
 
-
-                    _nemesysRepository.CreateReport(report);
                     return RedirectToAction("Index");
                 }
                 else
@@ -355,7 +282,6 @@ namespace Nemesys.Contollers
                     }
                     else
                     {
-                        Console.WriteLine("1");
                         return Unauthorized();
                     }
                 }
@@ -460,7 +386,9 @@ namespace Nemesys.Contollers
         {
             try
             {
-                var model = _nemesysRepository.GetReportViewModelById(id, _userManager);
+                var model = _nemesysRepository.GetInvestigationViewModel(_nemesysRepository.GetInvestigationByReportId(id), _nemesysRepository.GetReportById(id));
+                    //_nemesysRepository.GetReportViewModel(_nemesysRepository.GetReportById(id));
+
 
                 return View(model);
             }
@@ -478,7 +406,7 @@ namespace Nemesys.Contollers
         {
             try 
             {
-                var model = _nemesysRepository.GetReportViewModelById(id, _userManager);
+                var model = _nemesysRepository.GetReportViewModel(_nemesysRepository.GetReportById(id));
 
                 return View(model);
             }
@@ -510,9 +438,6 @@ namespace Nemesys.Contollers
         }
         
 
-
-
-
         public IActionResult HallOfFame()
         {
             try
@@ -525,6 +450,5 @@ namespace Nemesys.Contollers
                 return View("Error");
             }
         }
-
     }
 }

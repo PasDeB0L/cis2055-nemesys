@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Nemesys.Models;
 using Nemesys.Models.Interfaces;
+using Nemesys.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -28,11 +29,36 @@ namespace Nemesys.Contollers
         }
 
 
-        public IActionResult Index()
+        [HttpGet]
+        public async Task<string> GetCurrentUserId()
+        {
+            ApplicationUser usr = await GetCurrentUserAsync();
+            return usr?.Id;
+        }
+
+        private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
+
+
+        public async Task<IActionResult> IndexAsync()
         {
             try
             {
-                return View();
+                var model = new InvestigationListViewModel()
+                {
+                    TotalEntries = _nemesysRepository.GetAllReports().Count(),
+
+                    Investigations = _nemesysRepository
+                    .GetAllInvestigations()
+                    .OrderByDescending(b => b.DateOfAction)
+                    .Select(b => new InvestigationViewModel
+                    {
+                        
+                    })
+                };
+
+                ViewData["User"] = await GetCurrentUserId();
+
+                return View(model);
             }
             catch (Exception ex)
             {

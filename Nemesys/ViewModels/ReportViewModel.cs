@@ -20,6 +20,7 @@ namespace Nemesys.ViewModels
         public InvestigationViewModel Investigation { get; set; }
         public StatusViewModel Status { get; set; }
         public TypeOfHazardViewModel TypeOfHazard { get; set; }
+        
         public AuthorViewModel Author { get; set; }
     }
 }

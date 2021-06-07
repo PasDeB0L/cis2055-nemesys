@@ -1,28 +1,28 @@
-﻿@model Nemesys.ViewModels.ReportViewModel
+﻿@model Nemesys.ViewModels.InvestigationViewModel
 
 
 
 <div class="card" style="width: 90%;padding:20px; margin:20px;">
 
     <div class="card-body">
-        <p class="card-text">Date of Action : @Model.Investigation.DateOfAction.ToShortDateString()</p>
-        <p class="small">Description : @Model.Investigation.Description</p>
-        <p class="small">Investigator details  : @Model.Investigation.</p>
+        <p class="card-text">Date of Action : @Model.DateOfAction.ToShortDateString()</p>
+        <p class="small">Description : @Model.Description</p>
+        <p class="small">Investigator details  : @Model.InvestigatorDetails</p>
     </div>
 
 
     <div class="card" style="width: 90%;padding:20px; margin:20px;">
-        <img class="card-img-top" src="@Model.ImageUrl" alt="Image for @Model.Title" />
+        <img class="card-img-top" src="@Model.Report.ImageUrl" alt="Image for @Model.Report.Title" />
         <div class="card-body">
-            <h3 class="card-title">@Model.Title</h3>
-            <p class="card-text">Date of the hazard @Model.Date.ToShortDateString()</p>
-            <p class="small">Description : @Model.Description</p>
-            <p class="small">Location : @Model.Location</p>
-            <p class="small">Type of hazard  : @Model.TypeOfHazard.Name</p>
-            <p class="small">Status : @Model.Status.Name</p>
-            <p class="small">Upvotes : @Model.Upvotes</p>
-            <p class="small">By @Model.Author.Name</p>
-            <p class="small">Create date: @Model.CreatedDate.ToShortDateString() </p>
+            <h3 class="card-title">@Model.Report.Title</h3>
+            <p class="card-text">Date of the hazard @Model.Report.Date.ToShortDateString()</p>
+            <p class="small">Description : @Model.Report.Description</p>
+            <p class="small">Location : @Model.Report.Location</p>
+            <p class="small">Type of hazard  : @Model.Report.TypeOfHazard.Name</p>
+            <p class="small">Status : @Model.Report.Status.Name</p>
+            <p class="small">Upvotes : @Model.Report.Upvotes</p>
+            <p class="small">By</p>
+            <p class="small">Create date: @Model.Report.CreatedDate.ToShortDateString() </p>
             <p class="small"></p>
         </div>
     </div>
