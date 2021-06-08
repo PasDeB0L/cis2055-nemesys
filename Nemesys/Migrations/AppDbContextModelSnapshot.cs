@@ -392,6 +392,28 @@ namespace Nemesys.Migrations
                     b.ToTable("TypeOfHazard");
                 });
 
+            modelBuilder.Entity("Nemesys.Models.Upvote", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("ReportId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ReportId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Upvotes");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
                 {
                     b.HasOne("Microsoft.AspNetCore.Identity.IdentityRole", null)
@@ -498,6 +520,23 @@ namespace Nemesys.Migrations
                     b.Navigation("Status");
 
                     b.Navigation("TypeOfHazard");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("Nemesys.Models.Upvote", b =>
+                {
+                    b.HasOne("Nemesys.Models.Report", "Report")
+                        .WithMany()
+                        .HasForeignKey("ReportId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Nemesys.Models.ApplicationUser", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Report");
 
                     b.Navigation("User");
                 });

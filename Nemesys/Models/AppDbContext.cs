@@ -20,9 +20,16 @@ namespace Nemesys.Models
         public DbSet<Status> Status { get; set; }
         public DbSet<TypeOfHazard> TypeOfHazard { get; set; }
 
+
+
+
         public DbSet<Category> Categories { get; set; }
         public DbSet<BlogPost> BlogPosts { get; set; }
 
-       
+
+
+        public DbSet<Upvote> Upvotes { get; set; }
+
+
     }
 }

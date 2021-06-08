@@ -34,10 +34,124 @@ namespace Nemesys.Models.Repositories
 
 
 
-        public bool UserUpvotes(string IdentityName)
-        {
-            return true;
+        public bool UserUpvoteReportExist(string userId, int reportId)
+        {           
+            Upvote upvote = _appDbContext.Upvotes.Include(b => b.User).Include(b => b.Report).Where(s => s.UserId.Contains(userId)).Where(p => p.ReportId == reportId).FirstOrDefault();
+            if (upvote != null)
+                return false;
+            else
+                return true;
         }
+
+        public IEnumerable<Upvote> GetAllUpvotesUser(string userId)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.Upvotes.Where(s => s.UserId.Contains(userId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public IEnumerable<Upvote> GetAllUpvotesReport(int reportId)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.Upvotes.Where(s => s.ReportId == reportId);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public void CreateUpvote(Upvote upvote)
+        {
+            try
+            {
+                _appDbContext.Upvotes.Add(upvote);
+
+                var existingReport = _appDbContext.Reports.SingleOrDefault(bp => bp.Id == upvote.ReportId);
+                
+                if (existingReport != null)
+                {
+                    existingReport.Upvotes++;
+                    _appDbContext.Entry(existingReport).State = EntityState.Modified;
+                    _appDbContext.SaveChanges();
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+
+        public async Task DeleteUpvotes(int reportId)
+        {
+            await DeleteUpvotes(GetAllUpvotesReport(reportId));
+        }
+
+        public async Task DeleteUpvotes(IEnumerable <Upvote> upvote)
+        {
+            foreach( var vote in upvote)
+            {
+                _appDbContext.Upvotes.Remove(vote);
+            }
+            await _appDbContext.SaveChangesAsync();
+        }
+
+
+
+
+
+
+
+
+
+
+
+        public HallOfFameViewModel GetHallOfFame()
+        {
+            HallOfFameViewModel HoF = new HallOfFameViewModel
+            {
+
+            };
+
+            IEnumerable<Report> AllReports = _appDbContext.Reports.Include(b => b.User).Where(c => c.CreatedDate > DateTime.UtcNow.AddYears(-1));
+
+
+            foreach ( var report in AllReports)
+            {
+
+            }
+
+
+              //  AuthorViewModel author = GetAuthorViewModel(report.UserId)
+
+
+
+            return HoF;
+
+        }
+
+
+
+
+
+
+
+
+
+
+
 
 
         /*
@@ -200,29 +314,35 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public ReportListViewModel GetReportListViewModel()
+        public ReportListViewModel GetReportListViewModel(string userId)
         {
             IEnumerable<Report> AllReports = GetAllReports();
-            
+
             return new ReportListViewModel
             {
                 TotalEntries = AllReports.Count(),
-                Reports = GetAllReportsViewModel(AllReports)
+
+                Reports = GetAllReportsViewModel(AllReports, userId)
             };
         }
 
-        public IEnumerable<ReportViewModel> GetAllReportsViewModel(IEnumerable<Report> reports)
+        public IEnumerable<ReportViewModel> GetAllReportsViewModel(IEnumerable<Report> reports, string userId)
         {
             List<ReportViewModel> ListReportsViewModel  = new List<ReportViewModel> { };
 
             foreach (var report in reports)
             {
-                List<ReportViewModel> Listnew = ListReportsViewModel.Append( GetReportViewModel(report) ).ToList();
+                ReportViewModel reportVM = GetReportViewModel(report);
+                
+                reportVM.UserUpVote = UserUpvoteReportExist(userId, reportVM.Id);
+
+                List<ReportViewModel> Listnew = ListReportsViewModel.Append( reportVM ).ToList();
                 ListReportsViewModel = Listnew;
             }
             
             return ListReportsViewModel;
         }
+
 
         public IEnumerable<Report> GetAllReports(string userId)
         {
@@ -254,14 +374,12 @@ namespace Nemesys.Models.Repositories
                 Upvotes = report.Upvotes,
                 Status = GetStatusViewModel(report.Status),
                 TypeOfHazard = GetTypeOfHazardViewModel(report.TypeOfHazard),
-                Author = GetAuthorViewModel(report.UserId),
-                
+                Author = GetAuthorViewModel(report.UserId)
             };    
             
             if ( InvestigationForReportIdExist(report.Id) )
             {
                 reportVM.Investigation = GetInvestigationViewModel(GetInvestigationByReportId(report.Id));
-
             }
 
             return reportVM;
@@ -332,6 +450,8 @@ namespace Nemesys.Models.Repositories
             {
                  await DeleteInvestation(GetInvestigationByReportId(reportId));
             }
+
+            await DeleteUpvotes(reportId);
         }
 
         public async Task DeleteReport(Report report)
@@ -357,6 +477,7 @@ namespace Nemesys.Models.Repositories
                     existingReport.Upvotes = report.Upvotes;
                     existingReport.StatusId = report.StatusId;
                     existingReport.TypeOfHazardId = report.TypeOfHazardId;
+                    existingReport.Upvotes = report.Upvotes;
 
                     _appDbContext.Entry(existingReport).State = EntityState.Modified;
                     _appDbContext.SaveChanges();
@@ -425,7 +546,28 @@ namespace Nemesys.Models.Repositories
 
 
 
-        
+
+
+
+
+        public IEnumerable<Upvote> GetAllUpvotes(string reportId)
+        {
+            try
+            {
+                //Using Eager loading with Include
+                return _appDbContext.Upvotes.Where(s => s.UserId.Contains(reportId));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+
+
+
+
         public InvestigationListViewModel GetInvestigationListViewModel()
         {
             IEnumerable<Investigation> AllInvestigations = GetAllInvestigations();

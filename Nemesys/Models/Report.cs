@@ -20,6 +20,8 @@ namespace Nemesys.Models
         public int Upvotes { get; set; }
 
 
+
+
         //Foreign Key - navigation property name + key property name
         //public int InvestationId { get; set; }
         
