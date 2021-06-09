@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace Nemesys.Contollers
@@ -42,7 +44,7 @@ namespace Nemesys.Contollers
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
 
-        public async Task<IActionResult> IndexAsync( )
+        public async Task<IActionResult> IndexAsync( string searchStatus, string searchTypeOfHazard, string searchUpvote, string searchDate)
         {
             try
             {
@@ -50,7 +52,75 @@ namespace Nemesys.Contollers
                 
                 var model = _nemesysRepository.GetReportListViewModel( await GetCurrentUserId() );
 
+
                 ViewData["User"] = await GetCurrentUserId();
+
+                if (!string.IsNullOrEmpty(searchStatus))
+                {
+                    model.Reports = model.Reports.Where(b => b.Status.Name == searchStatus);
+                }
+
+                if (!string.IsNullOrEmpty(searchTypeOfHazard))
+                {
+                    model.Reports = model.Reports.Where(b => b.TypeOfHazard.Name == searchTypeOfHazard);
+                }
+
+                if (!string.IsNullOrEmpty(searchUpvote))
+                {
+                    if ( searchUpvote.Equals("Descending"))
+                        model.Reports = model.Reports.OrderByDescending(b => b.Upvotes );
+                    else
+                        model.Reports = model.Reports.OrderBy(b => b.Upvotes);
+                }
+
+                if (!string.IsNullOrEmpty(searchDate))
+                {
+                    if (searchDate.Equals("Descending"))
+                        model.Reports = model.Reports.OrderByDescending(b => b.Date);
+                    else
+                        model.Reports = model.Reports.OrderBy(b => b.Date);
+                }
+
+
+                IEnumerable<string> ascdescending = new string[] { "Ascending", "Descending" };
+
+                model.TotalEntries = model.Reports.Count();
+                model.Status = new SelectList(_nemesysRepository.GetAllStatusString());
+                model.TypeOfHzard = new SelectList(_nemesysRepository.GetAllTypesOfHazardString());
+                model.Upvote = new SelectList(ascdescending);
+                model.Date = new SelectList(ascdescending);
+
+
+                /*
+                //Instanciation du client
+                SmtpClient smtpClient = new SmtpClient("mail.gmail.com", 25);
+                //On indique au client d'utiliser les informations qu'on va lui fournir
+                smtpClient.UseDefaultCredentials = true;
+                //Ajout des informations de connexion
+                smtpClient.Credentials = new System.Net.NetworkCredential("charlessaison1@gmail.com", "BleudeChanel1");
+                //On indique que l'on envoie le mail par le réseau
+                smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;
+                //On active le protocole SSL
+                smtpClient.EnableSsl = true;
+
+
+
+                MailMessage mail = new MailMessage();
+                //Expéditeur
+                mail.From = new MailAddress("charlessaison1@gmail.com", "Mon site Internet");
+                //Destinataire
+                mail.To.Add(new MailAddress("charlessaison@hotmail.fr"));
+                //Copie
+                mail.CC.Add(new MailAddress("toto@gmail.com"));
+
+
+
+                smtpClient.Send(mail);
+
+                */
+
+
+
 
                 return View(model);
             }

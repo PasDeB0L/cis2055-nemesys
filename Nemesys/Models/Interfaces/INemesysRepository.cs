@@ -91,7 +91,7 @@ namespace Nemesys.Models.Interfaces
          */
         IEnumerable<Status> GetAllStatus();
         Status GetStatusById(int statusId);
-
+        IEnumerable<string> GetAllStatusString();
 
 
         /*
@@ -104,6 +104,7 @@ namespace Nemesys.Models.Interfaces
          */
         IEnumerable<TypeOfHazard> GetAllTypesOfHazard();
         TypeOfHazard GetTypeOfHazardById(int typeOfHazardId);
+        IEnumerable<string> GetAllTypesOfHazardString();
 
 
 

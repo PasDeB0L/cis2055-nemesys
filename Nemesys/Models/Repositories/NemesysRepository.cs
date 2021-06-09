@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nemesys.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using System.Net.Mail;
 
 namespace Nemesys.Models.Repositories
 {
@@ -296,7 +297,7 @@ namespace Nemesys.Models.Repositories
             try
             {
                 //Using Eager loading with Include
-                return _appDbContext.Reports.Include(b => b.Status).Include(b => b.TypeOfHazard).OrderBy(b => b.CreatedDate);
+                return _appDbContext.Reports.Include(b => b.Status).Include(b => b.TypeOfHazard).OrderByDescending(b => b.CreatedDate) ;
             }
             catch (Exception ex)
             {
@@ -708,6 +709,14 @@ namespace Nemesys.Models.Repositories
          * dbo.Investigations UPDATES
          * 
          */
+        
+        
+        
+        
+        
+        
+        
+        
         public void CreateInvestigation(Investigation investigation)
         {
             try
@@ -723,6 +732,11 @@ namespace Nemesys.Models.Repositories
 
                         _appDbContext.Entry(existingReport).State = EntityState.Modified;
                         _appDbContext.SaveChanges();
+
+
+                       
+
+
                     }
                 }
             }
@@ -833,6 +847,28 @@ namespace Nemesys.Models.Repositories
             }
         }
 
+        public IEnumerable<string> GetAllStatusString()
+        {
+            try
+            {
+                //Not loading related report
+
+                var AllStatus = _appDbContext.Status;
+                List<string> listStatus = new List<string> { };
+
+                foreach (var Status in AllStatus)
+                {
+                    listStatus.Add(Status.Name);
+                }
+                return listStatus;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
 
 
 
@@ -868,6 +904,28 @@ namespace Nemesys.Models.Repositories
             {
                 //Not loading related report
                 return _appDbContext.TypeOfHazard;
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                throw;
+            }
+        }
+
+        public IEnumerable<string> GetAllTypesOfHazardString()
+        {
+            try
+            {
+                //Not loading related report
+
+                var ToH = _appDbContext.TypeOfHazard;
+                List<string> listType = new List<string> { };
+
+                foreach ( var Type in ToH)
+                {
+                    listType.Add(Type.Name);
+                }
+                return listType;
             }
             catch (Exception ex)
             {

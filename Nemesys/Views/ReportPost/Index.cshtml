@@ -14,6 +14,29 @@
 
 <h2>Showing @Model.TotalEntries report entries</h2>
 
+
+<form asp-controller="ReportPost" asp-action="Index" method="get">
+    <p>
+
+        <select asp-for="SearchStatus" asp-items="@Model.Status">
+            <option value="">All Status</option>
+        </select>
+
+        <select asp-for="SearchTypeOfHazard" asp-items="@Model.TypeOfHzard">
+            <option value="">All Hazards</option>
+        </select>
+        <select asp-for="SearchUpvote" asp-items="Model.Upvote">
+            <option value="">Upvote</option>
+        </select>
+        <select asp-for="SearchDate" asp-items="Model.Date">
+            <option value="">Date</option>
+        </select>
+        <input type="submit" value="Filter" />
+    </p>
+</form>
+
+
+
 <div class="row">
     @foreach (var report in Model.Reports)
     {
