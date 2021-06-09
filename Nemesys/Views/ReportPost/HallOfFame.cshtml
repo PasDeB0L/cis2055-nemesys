@@ -1,2 +1,38 @@
-﻿
+﻿@model Nemesys.ViewModels.HallOfFameListViewModel
+
+
+
 <h1>Hall of fame</h1>
+
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TotalReporters)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HallOfFame.ElementAt(0).Authors )
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.HallOfFame.ElementAt(0).NumberOfReport )
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+         
+        @for (int i = 1; i< Model.TotalReporters +1; i++)
+        {
+            <tr>
+                <td>@i</td>
+                <td>
+                    @Model.HallOfFame.ElementAt(i-1).Authors.Name
+                </td>
+                <td>
+                    @Model.HallOfFame.ElementAt(i-1).NumberOfReport
+                </td>               
+            </tr>
+        }
+    </tbody>
+</table>

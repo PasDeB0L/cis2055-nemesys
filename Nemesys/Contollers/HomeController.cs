@@ -42,5 +42,12 @@ namespace Nemesys.Contollers
                 return View("Error");
             }
         }
+
+
+        public IActionResult Privacy()
+        {
+            return View();
+        }
+
     }
 }

@@ -10,7 +10,16 @@ namespace Nemesys.Models.Interfaces
     public interface INemesysRepository
     {
 
-        bool UserUpvotes(string IdentityName );
+        
+
+
+        bool UserUpvoteReportExist(string userId, int reportId);
+        IEnumerable<Upvote> GetAllUpvotesUser(string userId);
+        IEnumerable<Upvote> GetAllUpvotesReport(int reportId);
+        void CreateUpvote(Upvote upvote);
+        Task DeleteUpvotes( int reportId);
+
+        HallOfFameListViewModel GetHallOfFameList();
 
 
         /*
@@ -19,8 +28,8 @@ namespace Nemesys.Models.Interfaces
         IEnumerable<Report> GetAllReports();
         IEnumerable<Report> GetAllReports(string userId);
 
-        ReportListViewModel GetReportListViewModel();
-        IEnumerable<ReportViewModel> GetAllReportsViewModel(IEnumerable<Report> reports);      
+        ReportListViewModel GetReportListViewModel(string userId);
+        IEnumerable<ReportViewModel> GetAllReportsViewModel(IEnumerable<Report> reports, string userId);      
         ReportViewModel GetReportViewModel(Report report);
         Report GetReportById(int reportId);
 

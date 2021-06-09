@@ -42,12 +42,14 @@ namespace Nemesys.Contollers
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
 
-        public async Task<IActionResult> IndexAsync()
+        public async Task<IActionResult> IndexAsync( )
         {
             try
             {
-                var model = _nemesysRepository.GetReportListViewModel();
+                var currentUser = await _userManager.GetUserAsync(User);
                 
+                var model = _nemesysRepository.GetReportListViewModel( await GetCurrentUserId() );
+
                 ViewData["User"] = await GetCurrentUserId();
 
                 return View(model);
@@ -58,6 +60,61 @@ namespace Nemesys.Contollers
                 return View("Error");
             }
         }
+
+
+
+        public IActionResult HallOfFame()
+        {
+            try
+            {
+                var model = _nemesysRepository.GetHallOfFameList();
+
+                return View(model);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+                return View("Error");
+            }
+        }
+
+
+        
+
+
+
+
+
+
+
+        public async Task<IActionResult> Upvotes(int id)
+        {
+            
+            try
+            {
+                Console.WriteLine("void upvote");
+
+                Upvote upvote = new Upvote
+                {
+                    ReportId = id,
+                    UserId = await GetCurrentUserId()
+                };
+
+                _nemesysRepository.CreateUpvote(upvote);
+
+                
+                
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, ex.Message, ex.Data);
+            }
+            return RedirectToAction("Index");
+        }
+
+
+
+
 
 
         public IActionResult Details(int id)
@@ -408,8 +465,6 @@ namespace Nemesys.Contollers
             {
                 var model = _nemesysRepository.GetReportViewModel(_nemesysRepository.GetReportById(id));
 
-                
-
                 return View(model);
             }
             catch (Exception ex)
@@ -437,19 +492,13 @@ namespace Nemesys.Contollers
                 return View("Error");
             }
         }
+
+
+        
         
 
-        public IActionResult HallOfFame()
-        {
-            try
-            {
-                return View();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message, ex.Data);
-                return View("Error");
-            }
-        }
+
+
+        
     }
 }
