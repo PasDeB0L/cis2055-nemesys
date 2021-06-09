@@ -109,42 +109,33 @@ namespace Nemesys.Models.Repositories
         }
 
 
-
-
-
-
-
-
-
-
-
-        public HallOfFameViewModel GetHallOfFame()
+        public HallOfFameListViewModel GetHallOfFameList()
         {
-            HallOfFameViewModel HoF = new HallOfFameViewModel
-            {
-
-            };
-
             IEnumerable<Report> AllReports = _appDbContext.Reports.Include(b => b.User).Where(c => c.CreatedDate > DateTime.UtcNow.AddYears(-1));
+            
+            IEnumerable<string> ListUsersId =  AllReports.Select(d => d.UserId).Distinct();
 
+            List<HallOfFameViewModel> hallOfFame = new List<HallOfFameViewModel> { };
 
-            foreach ( var report in AllReports)
+            foreach ( var usrId in ListUsersId)
             {
-
+                hallOfFame.Add(new HallOfFameViewModel
+                {
+                    Authors = GetAuthorViewModel(usrId),
+                    NumberOfReport = AllReports.Where(d => d.UserId == usrId).Count()
+                });
             }
 
+            IEnumerable<HallOfFameViewModel> hallOfFameOrderBy = hallOfFame.OrderByDescending(b => b.NumberOfReport);
 
-              //  AuthorViewModel author = GetAuthorViewModel(report.UserId)
+            HallOfFameListViewModel HoFList = new HallOfFameListViewModel
+            {
+                TotalReporters = ListUsersId.Count(),
+                HallOfFame = hallOfFameOrderBy
+            };
 
-
-
-            return HoF;
-
+            return HoFList;
         }
-
-
-
-
 
 
 
@@ -884,6 +875,7 @@ namespace Nemesys.Models.Repositories
                 throw;
             }
         }
+
         public TypeOfHazard GetTypeOfHazardById(int typeOfHazardId)
         {
             try

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -7,10 +8,11 @@ namespace Nemesys.ViewModels
 {
     public class HallOfFameViewModel
     {
-        public int TotalEntries { get; set; }
+        [Display(Name = "Email")]
+        public AuthorViewModel Authors { get; set; }
 
-        public IEnumerable<AuthorViewModel> Authors { get; set; }
 
-        public IEnumerable<int> NumberOfReport { get; set; }
+        [Display(Name = "Number of reports done since 1 year")]
+        public int NumberOfReport { get; set; }
     }
 }

@@ -62,13 +62,12 @@ namespace Nemesys.Contollers
         }
 
 
-        public async Task<IActionResult> HallOfFame()
+
+        public IActionResult HallOfFame()
         {
             try
             {
-                var model = _nemesysRepository.GetAllTypesOfHazard();
-
-                
+                var model = _nemesysRepository.GetHallOfFameList();
 
                 return View(model);
             }
@@ -78,6 +77,13 @@ namespace Nemesys.Contollers
                 return View("Error");
             }
         }
+
+
+        
+
+
+
+
 
 
 
