@@ -27,11 +27,11 @@ namespace Nemesys.Models.Interfaces
         */
         IEnumerable<Report> GetAllReports();
         IEnumerable<Report> GetAllReports(string userId);
-
+        Report GetReportById(int reportId);
         ReportListViewModel GetReportListViewModel(string userId);
         IEnumerable<ReportViewModel> GetAllReportsViewModel(IEnumerable<Report> reports, string userId);      
         ReportViewModel GetReportViewModel(Report report);
-        Report GetReportById(int reportId);
+        
 
 
 
@@ -39,7 +39,7 @@ namespace Nemesys.Models.Interfaces
          * dbo.Reports UPDATES
          */
         void CreateReport(Report report);
-        void CreateReport(string Title, string Description, string Location, string fileName, int TypeOfHazardId, int StatusId, DateTime Date, string reporterInformation, string userId);
+        void CreateReport(EditReportViewModel reportEditVM);
         Task DeleteReport(int reportId);
         Task DeleteReport(Report report);
         void UpdateReport(Report report);

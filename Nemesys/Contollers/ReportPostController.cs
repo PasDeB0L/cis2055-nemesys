@@ -157,7 +157,7 @@ namespace Nemesys.Contollers
 
 
 
-        public async Task<IActionResult> Upvotes(int id)
+        public async Task<IActionResult> Upvotes(int id, string searchStatus, string searchTypeOfHazard, string searchUpvote, string searchDate)
         {
             
             try
@@ -275,7 +275,7 @@ namespace Nemesys.Contollers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
         [Authorize]
-        public IActionResult Create([Bind("Title, Description, Location, ImageToUpload, TypeOfHazardId, Date")] EditReportViewModel newReport)
+        public async Task<IActionResult> CreateAsync([Bind("Title, Description, Location, ImageToUpload, TypeOfHazardId, Date")] EditReportViewModel newReport)
         {
             try
             {
@@ -295,8 +295,13 @@ namespace Nemesys.Contollers
                         }
                     }
 
+                    var currentUser = await _userManager.GetUserAsync(User);
 
-                    _nemesysRepository.CreateReport(newReport.Title, newReport.Description, newReport.Location, fileName, newReport.TypeOfHazardId, newReport.StatusId, newReport.Date, _userManager.GetUserId(User), _userManager.GetUserId(User));
+                    newReport.Author = _nemesysRepository.GetAuthorViewModel(currentUser.Id);
+
+                    _nemesysRepository.CreateReport(newReport);
+
+                    //_nemesysRepository.CreateReport(newReport.Title, newReport.Description, newReport.Location, fileName, newReport.TypeOfHazardId, newReport.StatusId, newReport.Date, _userManager.GetUserId(User), _userManager.GetUserId(User));
 
                     return RedirectToAction("Index");
                 }

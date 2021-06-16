@@ -91,7 +91,7 @@ namespace Nemesys.Areas.Identity.Pages.Account
                 if (result.Succeeded)
                 {
                     //Add user to lowest privilege role
-                    await _userManager.AddToRoleAsync(user, "User");
+                    await _userManager.AddToRoleAsync(user, "Reporter");
 
                     _logger.LogInformation("User created a new account with password.");
 

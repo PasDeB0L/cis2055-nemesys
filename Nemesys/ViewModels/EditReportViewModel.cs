@@ -59,5 +59,6 @@ namespace Nemesys.ViewModels
         public List<TypeOfHazardViewModel> TypeOfHazardList { get; set; }
 
 
+        public AuthorViewModel Author { get; set; }
     }
 }

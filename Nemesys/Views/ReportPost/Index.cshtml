@@ -55,8 +55,7 @@
                     By @report.ReporterInformations
                 </p>
 
-
-                @if (!@report.Status.Name.Equals("Closed") && (User.IsInRole("User"))) // regarder si le user a pas deja upvote pour ce report
+                @if (!@report.Status.Name.Equals("Closed") && (User.IsInRole("Reporter"))) // regarder si le user a pas deja upvote pour ce report
                 {
                     if (@report.UserUpVote)
                     {
@@ -66,7 +65,7 @@
 
                 @if (@report.Status.Name.Equals("Open") )
                 {
-                    @if ( (User.IsInRole("User")) ) // User.IsInRole("Administrator")
+                    @if ( (User.IsInRole("Investigator")) ) // User.IsInRole("Administrator")
                     {
                         <a asp-controller="InvestigationPost" asp-action="Create" asp-route-id="@report.Id" class="btn btn-primary">Investigate</a>
                     }
@@ -76,7 +75,7 @@
                     <a asp-controller="ReportPost" asp-action="Investigation" asp-route-id="@report.Id" class="btn btn-primary">Investigation</a>
                 }
 
-                @if (@report.Author.Id.Equals(@ViewData["User"]))
+                @if (@report.Author.Id.Equals(@ViewData["Reporter"]))
                 {
                     <a asp-controller="ReportPost" asp-action="Delete" asp-route-id="@report.Id" class="btn btn-primary">Delete</a>
                     <a asp-controller="ReportPost" asp-action="Edit" asp-route-id="@report.Id" class="btn btn-primary">Edit</a>

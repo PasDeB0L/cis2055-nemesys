@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Nemesys.Contollers
 {
-
+    [Authorize(Roles = "Investigator")]
     public class InvestigationPostController : Controller
     {
         private readonly INemesysRepository _nemesysRepository;
@@ -45,8 +45,8 @@ namespace Nemesys.Contollers
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
 
+        
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> IndexAsync()
         {
             try
@@ -74,14 +74,14 @@ namespace Nemesys.Contollers
         {
             try
             {
-                //Load all types Of hazard and create a list of TypeOfHazardViewModel
+                //Load all status and create a list of TypeOfHazardViewModel
                 var statusList = _nemesysRepository.GetAllStatus().Select(c => new StatusViewModel()
                 {
                     Id = c.Id,
                     Name = c.Name
                 }).ToList();
 
-
+                statusList.RemoveAt(0);
 
                 ReportViewModel report = _nemesysRepository.GetReportViewModel(_nemesysRepository.GetReportById(id));
 

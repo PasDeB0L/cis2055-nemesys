@@ -8,6 +8,7 @@ using Microsoft.Extensions.Logging;
 using Nemesys.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using System.Net.Mail;
+using System.IO;
 
 namespace Nemesys.Models.Repositories
 {
@@ -29,10 +30,6 @@ namespace Nemesys.Models.Repositories
                 throw;
             }
         }
-
-
-
-
 
 
         public bool UserUpvoteReportExist(string userId, int reportId)
@@ -207,69 +204,6 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        // = GetInvestigationViewModel(  GetInvestigationByReportId(int reportId) ,  GetReportById(int reportId) )
-        public InvestigationViewModel GetInvestigationForReportId(int reportId)
-        {
-            try
-            {
-                //Using Eager loading with Include
-                Investigation investigation = _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.ReportId == reportId);
-
-                InvestigationViewModel InvestigationVM = new InvestigationViewModel
-                {
-                    Id = investigation.Id,
-                    DateOfAction = investigation.DateOfAction,
-                    Description = investigation.Description,
-                    InvestigatorDetails = investigation.InvestigatorDetails
-                };
-
-                return InvestigationVM;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-
-
-
-        public InvestigationViewModel GetInvestigationViewModelById(int investigationId, UserManager<ApplicationUser> _userManager)
-        {
-            try
-            {
-                //Using Eager loading with Include
-                Investigation investigation = _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.Id == investigationId);
-
-                ReportViewModel report = GetReportViewModelById(investigation.ReportId);
-
-                InvestigationViewModel InvestigationVM = new InvestigationViewModel
-                {
-                    Id = investigation.Id,
-                    DateOfAction = investigation.DateOfAction,
-                    Description = investigation.Description,
-                    InvestigatorDetails = investigation.InvestigatorDetails,
-                    Report = report,
-                    /*
-                    Author = new AuthorViewModel()
-                    {
-                        Id = investigation.UserId,
-                        Name = (_userManager.FindByIdAsync(investigation.UserId).Result != null) ? _userManager.FindByIdAsync(investigation.UserId).Result.UserName : "Anonymous"
-                    }
-                    */
-                };
-
-
-                return InvestigationVM;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
 
 
 
@@ -292,6 +226,8 @@ namespace Nemesys.Models.Repositories
          * 
          * 
          */
+       
+
         public IEnumerable<Report> GetAllReports()
         {
             try
@@ -392,6 +328,53 @@ namespace Nemesys.Models.Repositories
             }
         }
 
+        public void CreateReport( EditReportViewModel reportEditVM )
+        {
+            string fileName = "";
+            
+            if (reportEditVM.ImageToUpload != null)
+            {
+                //At this point you should check size, extension etc...
+                //Then persist using a new name for consistency (e.g. new Guid)
+                var extension = "." + reportEditVM.ImageToUpload.FileName.Split('.')[reportEditVM.ImageToUpload.FileName.Split('.').Length - 1];
+                fileName = Guid.NewGuid().ToString() + extension;
+                var path = Directory.GetCurrentDirectory() + "\\wwwroot\\images\\reports\\" + fileName; // report
+                using (var bits = new FileStream(path, FileMode.Create))
+                {
+                    reportEditVM.ImageToUpload.CopyTo(bits);
+                }
+            }
+
+
+
+            string reporterInfo = "Mail: " + reportEditVM.Author.Name;
+            if (!reportEditVM.Author.Name.Equals(reportEditVM.Author.Alias) && (reportEditVM.Author.Alias!=null) )
+                reporterInfo += " | Alias: " + reportEditVM.Author.Alias;
+            if (reportEditVM.Author.PhoneNumber!=null)
+                reporterInfo += " | Phone number: " + reportEditVM.Author.PhoneNumber;
+            
+
+            Report report = new Report()
+            {
+                CreatedDate = DateTime.UtcNow,
+                Date = reportEditVM.Date,
+                Title = reportEditVM.Title,
+                Description = reportEditVM.Description,
+                Location = reportEditVM.Location,
+                ReporterInformations = reporterInfo,
+                ImageUrl = "/images/reports/" + fileName, 
+                Upvotes = 0,
+                StatusId = 1, // 1 = open 
+                TypeOfHazardId = reportEditVM.TypeOfHazardId,
+                UserId = reportEditVM.Author.Id
+            };
+
+            CreateReport(report);
+        }
+
+
+
+
         /*
          * 
          * dbo.Reports UPDATES
@@ -410,28 +393,7 @@ namespace Nemesys.Models.Repositories
                 throw;
             }
         }
-
-        public void CreateReport(string Title, string Description, string Location, string  fileName, int TypeOfHazardId, int StatusId, DateTime Date, string reporterInformation, string userId)
-        {
-            Report report = new Report()
-            {
-                CreatedDate = DateTime.UtcNow,
-                Date = Date,
-                Title = Title,
-                Description = Description,
-                Location = Location,
-                ReporterInformations = reporterInformation, // modifier _userManager.GetUserId(User)
-                ImageUrl = "/images/blogposts/" + fileName, // changer en reports apres
-                Upvotes = 0,
-                StatusId = 3, // 3 = open 
-                TypeOfHazardId = TypeOfHazardId,
-                UserId =userId// _userManager.GetUserId(User)
-
-            };
-
-            CreateReport(report);
-        }
-
+        
 
 
         public async Task DeleteReport(int reportId)
@@ -609,7 +571,8 @@ namespace Nemesys.Models.Repositories
         public  InvestigationViewModel GetInvestigationViewModel(int id)
         {
             InvestigationViewModel invVM = GetInvestigationViewModel( GetInvestigationById(id) );
-            invVM.Report = GetReportViewModelById(invVM.Report.Id);
+            //invVM.Report = GetReportViewModelById(invVM.Report.Id);
+            invVM.Report = GetReportViewModel(GetReportById(invVM.Report.Id));
             return invVM;
         }
 
@@ -686,11 +649,19 @@ namespace Nemesys.Models.Repositories
 
         public Investigation EditInvestigationViewModelToInvestigation(EditInvestigationViewModel editInvVM)
         {
+            string investigatorInfo = "Mail: " + editInvVM.Author.Name;
+            
+            if (!editInvVM.Author.Name.Equals(editInvVM.Author.Alias) && (editInvVM.Author.Alias != null))
+                investigatorInfo += " | Alias: " + editInvVM.Author.Alias;
+            if (editInvVM.Author.PhoneNumber != null)
+                investigatorInfo += " | Phone number: " + editInvVM.Author.PhoneNumber;
+
+
             return new Investigation
             {
                 DateOfAction = editInvVM.DateOfAction,
                 Description = editInvVM.Description,
-                InvestigatorDetails = editInvVM.Author.Name,
+                InvestigatorDetails = investigatorInfo,
                 ReportId = editInvVM.Report.Id,
                 StatusId = editInvVM.StatusId,
                 UserId = editInvVM.Author.Id
@@ -708,15 +679,7 @@ namespace Nemesys.Models.Repositories
          * 
          * dbo.Investigations UPDATES
          * 
-         */
-        
-        
-        
-        
-        
-        
-        
-        
+         */        
         public void CreateInvestigation(Investigation investigation)
         {
             try
@@ -732,11 +695,6 @@ namespace Nemesys.Models.Repositories
 
                         _appDbContext.Entry(existingReport).State = EntityState.Modified;
                         _appDbContext.SaveChanges();
-
-
-                       
-
-
                     }
                 }
             }
@@ -956,33 +914,16 @@ namespace Nemesys.Models.Repositories
          * AuthorViewModel
          * 
          */
-        public AuthorViewModel GetAuthorViewModel(string  UserId)
+        public AuthorViewModel GetAuthorViewModel(string UserId)
         {
             return new AuthorViewModel
             {
                 Id = UserId,
-                Name = _appDbContext.Users.FirstOrDefault(c => c.Id == UserId).UserName
+                Name = _appDbContext.Users.FirstOrDefault(c => c.Id == UserId).UserName,
+                Alias = _appDbContext.Users.FirstOrDefault(c => c.Id == UserId).AuthorAlias,
+                PhoneNumber = _appDbContext.Users.FirstOrDefault(c => c.Id == UserId).PhoneNumber
             };
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
