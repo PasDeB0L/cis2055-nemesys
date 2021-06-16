@@ -21,10 +21,6 @@ namespace Nemesys.ViewModels
         public ReportViewModel Report { get; set; }
 
 
-        //
-        //
-        // TROUVER UN MOYEN D INTERDIR DE LAISSER EN OPEN LE STATUS
-        //
         [Display(Name = "Report Post Status")]
         [Required(ErrorMessage = "Status is required")]
         public int StatusId { get; set; }

@@ -8,18 +8,16 @@ namespace Nemesys.Models
 {
     public class DbInitializer
     {
-        public static void SeedRoles(RoleManager<IdentityRole> roleManager)
+        public static void SeedRoles(RoleManager<IdentityRole> roleManager) // create roles
         {
             if (!roleManager.Roles.Any())
             {
-                //roleManager.CreateAsync(new IdentityRole("User")).Wait();
-                //roleManager.CreateAsync(new IdentityRole("Administrator")).Wait();
                 roleManager.CreateAsync(new IdentityRole("Reporter")).Wait();
                 roleManager.CreateAsync(new IdentityRole("Investigator")).Wait();
             }
         }
 
-        public static void SeedUsers(UserManager<ApplicationUser> userManager)
+        public static void SeedUsers(UserManager<ApplicationUser> userManager) // crzate 1 investigator and 1 reporter
         {
             if (!userManager.Users.Any())
             {
@@ -64,9 +62,9 @@ namespace Nemesys.Models
             }
         }
 
+
         public static void SeedData(UserManager<ApplicationUser> userManager, AppDbContext context)
         {
-
             if (!context.Status.Any())
             {
                 context.AddRange
@@ -98,7 +96,7 @@ namespace Nemesys.Models
                 (
                     new TypeOfHazard()
                     {
-                        Name = "(e.g. unsafe act"
+                        Name = "e.g. unsafe act"
                     },
                     new TypeOfHazard()
                     {
@@ -154,45 +152,8 @@ namespace Nemesys.Models
                         TypeOfHazardId = 2,
                         UserId = user.Id
                     }
-
                 );
                 context.SaveChanges();
-            }
-
-
-
-
-
-
-            if (!context.Investigations.Any())
-            {
-                //Grabbing first one
-               // var user = userManager.GetUsersInRoleAsync("Investigator").Result.FirstOrDefault();
-                
-                
-                
-
-
-
-                /*
-                context.AddRange
-                (
-                    new Investigation()
-                    {
-                        DateOfAction = DateTime.UtcNow,
-                        Description = "test invest",
-                        InvestigatorDetails = user.Email,
-                        StatusId = 4,
-                        ReportId = 1,
-                        UserId = user.Id
-                    }
-                );
-                context.SaveChanges();
-                */
-
-
-
-
             }
         }
     }

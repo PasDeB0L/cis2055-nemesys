@@ -22,10 +22,6 @@ namespace Nemesys.ViewModels
         public DateTime CreatedDate { get; set; }
 
 
-        /**
-        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
-        public DateTime ReleaseDate { get; set; }
-        */
         [Display(Name = "Date of the hazard")]
         [DataType(DataType.Date)]
         public DateTime Date { get; set; }
@@ -57,7 +53,6 @@ namespace Nemesys.ViewModels
         public List<StatusViewModel> StatusList { get; set; }
         //Property used solely to populate drop down
         public List<TypeOfHazardViewModel> TypeOfHazardList { get; set; }
-
 
         public AuthorViewModel Author { get; set; }
     }

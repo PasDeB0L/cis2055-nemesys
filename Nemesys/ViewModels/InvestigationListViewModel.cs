@@ -11,6 +11,5 @@ namespace Nemesys.ViewModels
         public int TotalEntries { get; set; }
         public IEnumerable<InvestigationViewModel> Investigations { get; set; }
 
-        public Task<string> UserId { get; set; }
     }
 }

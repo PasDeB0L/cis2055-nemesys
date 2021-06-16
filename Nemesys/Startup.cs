@@ -65,19 +65,8 @@ namespace Nemesys
             });
 
 
-
-            //if (_env.IsDevelopment())
-            //    services.AddTransient<INemesysRepository, MockNemesysRepository>();
-            //if (_env.IsProduction())
-            //    services.AddTransient<INemesysRepository, NemesysRepository>(); //this would be a different repository in production
-
-            //Let's keep it simple for now
+            
             services.AddTransient<INemesysRepository, NemesysRepository>();
-
-            //Switch to mock (using singleton)
-            //services.AddSingleton<INemesysRepository, MockNemesysRepository>();
-
-
             services.AddControllersWithViews().AddRazorRuntimeCompilation();
         }
 
