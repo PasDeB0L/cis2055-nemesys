@@ -26,7 +26,7 @@ namespace Nemesys.Models
         //Reference navigation status
         public Status Status { get; set; }
         public int TypeOfHazardId { get; set; }
-        //Reference navigation TypeOfHazard
+        //Reference navigation type
         public TypeOfHazard TypeOfHazard { get; set; }
 
 

@@ -131,7 +131,7 @@ namespace Nemesys.Models.Repositories
                 });
             }
 
-            IEnumerable<HallOfFameViewModel> hallOfFameOrderBy = hallOfFame.OrderByDescending(b => b.NumberOfReport);
+            IEnumerable<HallOfFameViewModel> hallOfFameOrderBy = hallOfFame.OrderByDescending(b => b.NumberOfReport); // with that we have the list order by the number of report done for each user for the hall of fame
 
             HallOfFameListViewModel HoFList = new HallOfFameListViewModel
             {
@@ -602,7 +602,7 @@ namespace Nemesys.Models.Repositories
         {
             try
             {
-                if (InvestigationForReportIdExist(investigation.ReportId) == false)
+                if (InvestigationForReportIdExist(investigation.ReportId) == false) // if there isnt any investigation on the report
                 {
                     _appDbContext.Investigations.Add(investigation);
 

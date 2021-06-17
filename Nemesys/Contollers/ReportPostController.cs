@@ -57,6 +57,8 @@ namespace Nemesys.Contollers
 
                 ViewData["User"] = await GetCurrentUserId();
 
+               
+
                 if (!string.IsNullOrEmpty(searchStatus)) 
                 {
                     model.Reports = model.Reports.Where(b => b.Status.Name == searchStatus); // we only keep the reports with Status = searchStatus
@@ -133,7 +135,8 @@ namespace Nemesys.Contollers
         {
             //Check if the current user has access to this resource
             var currentUser = await _userManager.GetUserAsync(User);
-            if ( !_nemesysRepository.UserUpvoteReportExist(currentUser.Id, id) )
+
+            if ( _nemesysRepository.UserUpvoteReportExist(currentUser.Id, id) )
             {
                 try
                 {
@@ -157,58 +160,6 @@ namespace Nemesys.Contollers
 
 
 
-
-        /*
-         * Details on the report selected
-         */
-        public IActionResult Details(int id)
-        {
-            try
-            {
-                var b = _nemesysRepository.GetReportById(id);
-                if (b == null)
-                    return NotFound();
-                else
-                {
-                    /*
-                    var model = new ReportViewModel()
-                    {
-                        Id = b.Id,
-                        CreatedDate = b.CreatedDate,
-                        Date = b.Date,
-                        Title = b.Title,
-                        Description = b.Description,
-                        Location = b.Location,
-                        ReporterInformations = b.ReporterInformations,
-                        ImageUrl = b.ImageUrl,
-                        Upvotes = b.Upvotes,
-                        
-
-
-                        Status = new StatusViewModel()
-                        {
-                            Id = b.Status.Id,
-                            Name = b.Status.Name
-                        },
-                        TypeOfHazard = new TypeOfHazardViewModel()
-                        {
-                            Id = b.TypeOfHazard.Id,
-                            Name = b.TypeOfHazard.Name
-                        },
-                         
-
-                    };
-                    */
-                    var model = _nemesysRepository.GetReportViewModel(b);
-                    return View(model);
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message, ex.Data);
-                return View("Error");
-            }
-        }
 
 
 

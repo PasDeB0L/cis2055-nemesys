@@ -10,7 +10,11 @@ namespace Nemesys.ViewModels
     {
         public int Id { get; set; }
 
+        [DisplayFormat(DataFormatString = "{0:yyyy-MM-dd}", ApplyFormatInEditMode = true)]
+        [Display(Name = "Date of action")]
+        [DataType(DataType.Date)]
         public DateTime DateOfAction { get; set; }
+
 
         [Required(ErrorMessage = "Investigation description is required")]
         [StringLength(1500, ErrorMessage = "Investigation  cannot be longer than 1500 characters")]
