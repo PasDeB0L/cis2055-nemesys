@@ -58,7 +58,7 @@ namespace Nemesys.Models
                 {
                     //Add to role
                     userManager.AddToRoleAsync(admin, "Investigator").Wait();
-                }
+                }                
             }
         }
 
