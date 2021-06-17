@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace Nemesys.Contollers
 {
-
+    [Authorize(Roles = "Investigator")] // let only the Investigator to access
     public class InvestigationPostController : Controller
     {
         private readonly INemesysRepository _nemesysRepository;
@@ -45,15 +45,17 @@ namespace Nemesys.Contollers
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
 
+        /*
+         * Show all the investigations of the user 
+         */
         [HttpGet]
-        [Authorize]
-        public async Task<IActionResult> IndexAsync()
+        public async Task<IActionResult> IndexAsync() 
         {
             try
             {
                 var usr = await GetCurrentUserId();
 
-                var model = _nemesysRepository.GetInvestigationListViewModel(usr);
+                var model = _nemesysRepository.GetInvestigationListViewModel(usr); // we ask for all the Investigations
 
                 ViewData["User"] = usr;
 
@@ -67,26 +69,27 @@ namespace Nemesys.Contollers
         }
 
 
-
+        /*
+         * Load the model for the view to create an investigation for the reportId = id
+         */
         [HttpGet]
         [Authorize]
-        public IActionResult Create(int id)
+        public IActionResult Create(int id) 
         {
             try
             {
-                //Load all types Of hazard and create a list of TypeOfHazardViewModel
+                //Load all status and create a list of StatusViewModel
                 var statusList = _nemesysRepository.GetAllStatus().Select(c => new StatusViewModel()
                 {
                     Id = c.Id,
                     Name = c.Name
                 }).ToList();
 
-
+                statusList.RemoveAt(0); // we remove the choice of "Open" for the status 
 
                 ReportViewModel report = _nemesysRepository.GetReportViewModel(_nemesysRepository.GetReportById(id));
 
 
-                //Pass the list into an EditReportViewModel, which is used by the View (all other properties may be left blank, unless you want to add other default values
                 var model = new EditInvestigationViewModel()
                 {
                     Report = report,
@@ -104,11 +107,12 @@ namespace Nemesys.Contollers
             }
         }
 
+
         // POST: ReportPost/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // To protect from overposting attacks,
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> CreateAsync(int id ,[Bind(" Description, StatusId, DateOfAction")] EditInvestigationViewModel newInvestigation)
+        public async Task<IActionResult> Create(int id ,[Bind(" Description, StatusId, DateOfAction")] EditInvestigationViewModel newInvestigation)
         {
             try
             {
@@ -125,11 +129,11 @@ namespace Nemesys.Contollers
                     
                     _nemesysRepository.CreateNewInvestigation(newInvestigation);
 
-                    return RedirectToAction("Index");
+                    return RedirectToAction("Index"); // we go bak to the investion index view
                 }
                 else
                 {
-                    //Load all types Of hazard and create a list of TypeOfHazardViewModel
+                    //Load all types Of hazard and create a list of StatusViewModel
                     var statusList = _nemesysRepository.GetAllStatus().Select(c => new StatusViewModel()
                     {
                         Id = c.Id,
@@ -301,14 +305,15 @@ namespace Nemesys.Contollers
 
         [HttpGet]
         [Authorize]
+        /*
+         * Details n the investigationId = id
+         */
         public IActionResult Details(int id)
         {
             try
             {
                 var model = _nemesysRepository.GetInvestigationViewModel(id);
-                    //_nemesysRepository.GetReportViewModel(_nemesysRepository.GetReportById(id));
-
-
+ 
                 return View(model);
             }
             catch (Exception ex)

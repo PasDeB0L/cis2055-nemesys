@@ -8,16 +8,16 @@ namespace Nemesys.Models
 {
     public class DbInitializer
     {
-        public static void SeedRoles(RoleManager<IdentityRole> roleManager)
+        public static void SeedRoles(RoleManager<IdentityRole> roleManager) // create roles
         {
             if (!roleManager.Roles.Any())
             {
-                roleManager.CreateAsync(new IdentityRole("User")).Wait();
-                roleManager.CreateAsync(new IdentityRole("Administrator")).Wait();
+                roleManager.CreateAsync(new IdentityRole("Reporter")).Wait();
+                roleManager.CreateAsync(new IdentityRole("Investigator")).Wait();
             }
         }
 
-        public static void SeedUsers(UserManager<ApplicationUser> userManager)
+        public static void SeedUsers(UserManager<ApplicationUser> userManager) // crzate 1 investigator and 1 reporter
         {
             if (!userManager.Users.Any())
             {
@@ -37,7 +37,7 @@ namespace Nemesys.Models
                 if (result.Succeeded)
                 {
                     //Add to role
-                    userManager.AddToRoleAsync(user, "User").Wait();
+                    userManager.AddToRoleAsync(user, "Reporter").Wait();
                 }
 
                 
@@ -57,91 +57,14 @@ namespace Nemesys.Models
                 if (result.Succeeded)
                 {
                     //Add to role
-                    userManager.AddToRoleAsync(admin, "Administrator").Wait();
-                }
+                    userManager.AddToRoleAsync(admin, "Investigator").Wait();
+                }                
             }
         }
 
+
         public static void SeedData(UserManager<ApplicationUser> userManager, AppDbContext context)
         {
-
-            /*
-             * 
-             * 
-             * 
-             * For BloggyDB
-             * 
-             * 
-             * 
-             * 
-             */
-
-
-
-            if (!context.Categories.Any())
-            {
-                context.AddRange
-                (
-                    new Category()
-                    {
-                        Name = "Uncategorised"
-                    },
-                    new Category()
-                    {
-                        Name = "Comedy"
-                    },
-                    new Category()
-                    {
-                        Name = "News"
-                    }
-                );
-                context.SaveChanges();
-            }
-
-            if (!context.BlogPosts.Any())
-            {
-                //Grabbing first one
-                var user = userManager.GetUsersInRoleAsync("User").Result.FirstOrDefault();
-
-                context.AddRange
-                (
-                    new BlogPost()
-                    {
-                        Title = "AGA Today",
-                        Content = "Today's AGA is characterized by a series of discussions and debates around ...",
-                        CreatedDate = DateTime.UtcNow,
-                        UpdatedDate = DateTime.UtcNow,
-                        ImageUrl = "/images/seed1.jpg",
-                        CategoryId = 1,
-                        UserId = user.Id
-                    },
-                    new BlogPost()
-                    {
-                        Title = "Traffic is incredible",
-                        Content = "Today's traffic can't be described using words. Only an image can do that ...",
-                        CreatedDate = DateTime.UtcNow.AddDays(-1),
-                        UpdatedDate = DateTime.UtcNow.AddDays(-1),
-                        ImageUrl = "/images/seed2.jpg",
-                        CategoryId = 2,
-                        UserId = user.Id
-                    },
-                    new BlogPost()
-                    {
-                        Title = "When is Spring really starting?",
-                        Content = "Clouds clouds all around us. I thought spring started already, but ...",
-                        CreatedDate = DateTime.UtcNow.AddDays(-2),
-                        UpdatedDate = DateTime.UtcNow.AddDays(-2),
-                        ImageUrl = "/images/seed3.jpg",
-                        CategoryId = 2,
-                        UserId = user.Id
-                    }
-                );
-                context.SaveChanges();
-            }
-
-
-
-
             if (!context.Status.Any())
             {
                 context.AddRange
@@ -173,7 +96,7 @@ namespace Nemesys.Models
                 (
                     new TypeOfHazard()
                     {
-                        Name = "(e.g. unsafe act"
+                        Name = "e.g. unsafe act"
                     },
                     new TypeOfHazard()
                     {
@@ -195,7 +118,7 @@ namespace Nemesys.Models
             if (!context.Reports.Any())
             {
                 //Grabbing first one
-                var user = userManager.GetUsersInRoleAsync("User").Result.FirstOrDefault();
+                var user = userManager.GetUsersInRoleAsync("Reporter").Result.FirstOrDefault();
 
                 context.AddRange
                 (
@@ -229,45 +152,8 @@ namespace Nemesys.Models
                         TypeOfHazardId = 2,
                         UserId = user.Id
                     }
-
                 );
                 context.SaveChanges();
-            }
-
-
-
-
-
-
-            if (!context.Investigations.Any())
-            {
-                //Grabbing first one
-                var user = userManager.GetUsersInRoleAsync("User").Result.FirstOrDefault();
-                
-                
-                
-
-
-
-                /*
-                context.AddRange
-                (
-                    new Investigation()
-                    {
-                        DateOfAction = DateTime.UtcNow,
-                        Description = "test invest",
-                        InvestigatorDetails = user.Email,
-                        StatusId = 4,
-                        ReportId = 1,
-                        UserId = user.Id
-                    }
-                );
-                context.SaveChanges();
-                */
-
-
-
-
             }
         }
     }

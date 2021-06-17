@@ -14,6 +14,5 @@ namespace Nemesys.ViewModels
 
         public ReportViewModel Report { get; set; }
 
-        public AuthorViewModel Author { get; set; }
     }
 }

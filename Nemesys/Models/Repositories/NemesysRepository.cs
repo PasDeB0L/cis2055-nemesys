@@ -7,6 +7,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Nemesys.ViewModels;
 using Microsoft.AspNetCore.Identity;
+using System.Net.Mail;
+using System.IO;
 
 namespace Nemesys.Models.Repositories
 {
@@ -30,11 +32,7 @@ namespace Nemesys.Models.Repositories
         }
 
 
-
-
-
-
-        public bool UserUpvoteReportExist(string userId, int reportId)
+        public bool UserUpvoteReportExist(string userId, int reportId) // return TRUE if the user already voted for the reportId and FALSE otherwise
         {           
             Upvote upvote = _appDbContext.Upvotes.Include(b => b.User).Include(b => b.Report).Where(s => s.UserId.Contains(userId)).Where(p => p.ReportId == reportId).FirstOrDefault();
             if (upvote != null)
@@ -43,7 +41,7 @@ namespace Nemesys.Models.Repositories
                 return true;
         }
 
-        public IEnumerable<Upvote> GetAllUpvotesUser(string userId)
+        public IEnumerable<Upvote> GetAllUpvotesUser(string userId)  // return all the Upvotes for a UserId
         {
             try
             {
@@ -57,7 +55,7 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public IEnumerable<Upvote> GetAllUpvotesReport(int reportId)
+        public IEnumerable<Upvote> GetAllUpvotesReport(int reportId)  // return all the Upvotes for a ReportId
         {
             try
             {
@@ -71,7 +69,11 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public void CreateUpvote(Upvote upvote)
+
+
+
+
+        public void CreateUpvote(Upvote upvote)  // create a nex Upvote in the DB
         {
             try
             {
@@ -94,7 +96,10 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        public async Task DeleteUpvotes(int reportId)
+
+
+
+        public async Task DeleteUpvotes(int reportId) // ask for all the Upvote with reportId and then ask to delete them all
         {
             await DeleteUpvotes(GetAllUpvotesReport(reportId));
         }
@@ -109,11 +114,11 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        public HallOfFameListViewModel GetHallOfFameList()
+        public HallOfFameListViewModel GetHallOfFameList() // return HallOffFameList
         {
-            IEnumerable<Report> AllReports = _appDbContext.Reports.Include(b => b.User).Where(c => c.CreatedDate > DateTime.UtcNow.AddYears(-1));
+            IEnumerable<Report> AllReports = _appDbContext.Reports.Include(b => b.User).Where(c => c.CreatedDate > DateTime.UtcNow.AddYears(-1)); // select all the report done since 1 year
             
-            IEnumerable<string> ListUsersId =  AllReports.Select(d => d.UserId).Distinct();
+            IEnumerable<string> ListUsersId =  AllReports.Select(d => d.UserId).Distinct(); // select only the distinct user who did a report
 
             List<HallOfFameViewModel> hallOfFame = new List<HallOfFameViewModel> { };
 
@@ -126,7 +131,7 @@ namespace Nemesys.Models.Repositories
                 });
             }
 
-            IEnumerable<HallOfFameViewModel> hallOfFameOrderBy = hallOfFame.OrderByDescending(b => b.NumberOfReport);
+            IEnumerable<HallOfFameViewModel> hallOfFameOrderBy = hallOfFame.OrderByDescending(b => b.NumberOfReport); // with that we have the list order by the number of report done for each user for the hall of fame
 
             HallOfFameListViewModel HoFList = new HallOfFameListViewModel
             {
@@ -145,129 +150,6 @@ namespace Nemesys.Models.Repositories
 
 
 
-        /*
-         * 
-         * 
-         * A FAIRE DISPARAITRE 
-         * 
-         * 
-         */
-
-
-        // = GetReportViewModel( GetReportById(int reportId) );
-        public ReportViewModel GetReportViewModelById(int reportId)
-        {
-            try
-            {
-                //Using Eager loading with Include
-                Report report = GetReportById(reportId);
-
-                ReportViewModel ReportVM = new ReportViewModel
-                {
-                    Id = report.Id,
-                    CreatedDate = report.CreatedDate,
-                    Date = report.Date,
-                    Title = report.Title,
-                    Description = report.Description,
-                    Location = report.Location,
-                    ReporterInformations = report.ReporterInformations,
-                    ImageUrl = report.ImageUrl,
-                    Upvotes = report.Upvotes,
-
-                    TypeOfHazard = new TypeOfHazardViewModel()
-                    {
-                        Id = report.TypeOfHazard.Id,
-                        Name = report.TypeOfHazard.Name
-                    },
-
-                    Status = new StatusViewModel()
-                    {
-                        Id = report.Status.Id,
-                        Name = report.Status.Name
-                    },
-                    /*
-                    Author = new AuthorViewModel()
-                    {
-                        Id = report.UserId,
-                        Name = (_userManager.FindByIdAsync(report.UserId).Result != null) ? _userManager.FindByIdAsync(report.UserId).Result.UserName : "Anonymous"
-                    }
-                    */
-                };
-
-                
-
-                return ReportVM;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-
-        // = GetInvestigationViewModel(  GetInvestigationByReportId(int reportId) ,  GetReportById(int reportId) )
-        public InvestigationViewModel GetInvestigationForReportId(int reportId)
-        {
-            try
-            {
-                //Using Eager loading with Include
-                Investigation investigation = _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.ReportId == reportId);
-
-                InvestigationViewModel InvestigationVM = new InvestigationViewModel
-                {
-                    Id = investigation.Id,
-                    DateOfAction = investigation.DateOfAction,
-                    Description = investigation.Description,
-                    InvestigatorDetails = investigation.InvestigatorDetails
-                };
-
-                return InvestigationVM;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-
-
-
-        public InvestigationViewModel GetInvestigationViewModelById(int investigationId, UserManager<ApplicationUser> _userManager)
-        {
-            try
-            {
-                //Using Eager loading with Include
-                Investigation investigation = _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.Id == investigationId);
-
-                ReportViewModel report = GetReportViewModelById(investigation.ReportId);
-
-                InvestigationViewModel InvestigationVM = new InvestigationViewModel
-                {
-                    Id = investigation.Id,
-                    DateOfAction = investigation.DateOfAction,
-                    Description = investigation.Description,
-                    InvestigatorDetails = investigation.InvestigatorDetails,
-                    Report = report,
-                    /*
-                    Author = new AuthorViewModel()
-                    {
-                        Id = investigation.UserId,
-                        Name = (_userManager.FindByIdAsync(investigation.UserId).Result != null) ? _userManager.FindByIdAsync(investigation.UserId).Result.UserName : "Anonymous"
-                    }
-                    */
-                };
-
-
-                return InvestigationVM;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
 
 
 
@@ -291,12 +173,14 @@ namespace Nemesys.Models.Repositories
          * 
          * 
          */
-        public IEnumerable<Report> GetAllReports()
+       
+
+        public IEnumerable<Report> GetAllReports()  // return all reports
         {
             try
             {
                 //Using Eager loading with Include
-                return _appDbContext.Reports.Include(b => b.Status).Include(b => b.TypeOfHazard).OrderBy(b => b.CreatedDate);
+                return _appDbContext.Reports.Include(b => b.Status).Include(b => b.TypeOfHazard).OrderByDescending(b => b.CreatedDate) ;
             }
             catch (Exception ex)
             {
@@ -305,7 +189,7 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public ReportListViewModel GetReportListViewModel(string userId)
+        public ReportListViewModel GetReportListViewModel(string userId) // return ReportListViewModel with all the reports done
         {
             IEnumerable<Report> AllReports = GetAllReports();
 
@@ -317,7 +201,7 @@ namespace Nemesys.Models.Repositories
             };
         }
 
-        public IEnumerable<ReportViewModel> GetAllReportsViewModel(IEnumerable<Report> reports, string userId)
+        public IEnumerable<ReportViewModel> GetAllReportsViewModel(IEnumerable<Report> reports, string userId) // return all the ReportViewModel
         {
             List<ReportViewModel> ListReportsViewModel  = new List<ReportViewModel> { };
 
@@ -335,7 +219,7 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        public IEnumerable<Report> GetAllReports(string userId)
+        public IEnumerable<Report> GetAllReports(string userId)  // get all Report with the UserId
         {
             try
             {
@@ -350,7 +234,7 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        public ReportViewModel GetReportViewModel(Report report)
+        public ReportViewModel GetReportViewModel(Report report) // changes Report to ReportViewModel
         {
             ReportViewModel reportVM = new ReportViewModel
             {
@@ -377,7 +261,7 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        public Report GetReportById(int reportId)
+        public Report GetReportById(int reportId)  // return the report with the same id as reportId
         {
             try
             {
@@ -391,12 +275,57 @@ namespace Nemesys.Models.Repositories
             }
         }
 
+        public void CreateReport( EditReportViewModel reportEditVM)  // transform EditReportViewModel to Report and then calls CreateReport(report)
+        {
+            string fileName = "";
+            
+            if (reportEditVM.ImageToUpload != null)
+            {
+                var extension = "." + reportEditVM.ImageToUpload.FileName.Split('.')[reportEditVM.ImageToUpload.FileName.Split('.').Length - 1];
+                fileName = Guid.NewGuid().ToString() + extension;
+                var path = Directory.GetCurrentDirectory() + "\\wwwroot\\images\\reports\\" + fileName; // report
+                using (var bits = new FileStream(path, FileMode.Create))
+                {
+                    reportEditVM.ImageToUpload.CopyTo(bits);
+                }
+            }
+
+
+
+            string reporterInfo = "Mail: " + reportEditVM.Author.Mail;
+            if (!reportEditVM.Author.Mail.Equals(reportEditVM.Author.Alias) && (reportEditVM.Author.Alias!=null) )
+                reporterInfo += " | Alias: " + reportEditVM.Author.Alias;
+            if (reportEditVM.Author.PhoneNumber!=null)
+                reporterInfo += " | Phone number: " + reportEditVM.Author.PhoneNumber;
+            
+
+            Report report = new Report()
+            {
+                CreatedDate = DateTime.UtcNow,
+                Date = reportEditVM.Date,
+                Title = reportEditVM.Title,
+                Description = reportEditVM.Description,
+                Location = reportEditVM.Location,
+                ReporterInformations = reporterInfo,
+                ImageUrl = "/images/reports/" + fileName, 
+                Upvotes = 0,
+                StatusId = 1, // 1 = open 
+                TypeOfHazardId = reportEditVM.TypeOfHazardId,
+                UserId = reportEditVM.Author.Id
+            };
+
+            CreateReport(report);
+        }
+
+
+
+
         /*
          * 
          * dbo.Reports UPDATES
          * 
          */
-        public void CreateReport(Report report)
+        public void CreateReport(Report report) // add Report in the Db
         {
             try
             {
@@ -409,31 +338,10 @@ namespace Nemesys.Models.Repositories
                 throw;
             }
         }
-
-        public void CreateReport(string Title, string Description, string Location, string  fileName, int TypeOfHazardId, int StatusId, DateTime Date, string reporterInformation, string userId)
-        {
-            Report report = new Report()
-            {
-                CreatedDate = DateTime.UtcNow,
-                Date = Date,
-                Title = Title,
-                Description = Description,
-                Location = Location,
-                ReporterInformations = reporterInformation, // modifier _userManager.GetUserId(User)
-                ImageUrl = "/images/blogposts/" + fileName, // changer en reports apres
-                Upvotes = 0,
-                StatusId = 3, // 3 = open 
-                TypeOfHazardId = TypeOfHazardId,
-                UserId =userId// _userManager.GetUserId(User)
-
-            };
-
-            CreateReport(report);
-        }
+        
 
 
-
-        public async Task DeleteReport(int reportId)
+        public async Task DeleteReport(int reportId)  // calls DeleteReport( GetReportById( reportId)) and then calls DeleteInvestigation( reportId) and DeleteUpvote(reportId)
         {
             await DeleteReport(GetReportById(reportId));
             
@@ -445,13 +353,13 @@ namespace Nemesys.Models.Repositories
             await DeleteUpvotes(reportId);
         }
 
-        public async Task DeleteReport(Report report)
+        public async Task DeleteReport(Report report)  // delete reportin the DB 
         {
             _appDbContext.Reports.Remove(report);
             await _appDbContext.SaveChangesAsync();
         }
 
-        public void UpdateReport(Report report)
+        public void UpdateReport(Report report)  // update the reports in the Db
         {
             try 
             {
@@ -506,7 +414,7 @@ namespace Nemesys.Models.Repositories
          * 
          * 
          */
-        public IEnumerable<Investigation> GetAllInvestigations()
+        public IEnumerable<Investigation> GetAllInvestigations()  // return all the Investigations
         {
             try
             {
@@ -520,7 +428,7 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public IEnumerable<Investigation> GetAllInvestigations(string userId)
+        public IEnumerable<Investigation> GetAllInvestigations(string userId)  // return all the Investigatione done by UserId
         {
             try
             {
@@ -537,39 +445,10 @@ namespace Nemesys.Models.Repositories
 
 
 
+         
 
 
-
-
-        public IEnumerable<Upvote> GetAllUpvotes(string reportId)
-        {
-            try
-            {
-                //Using Eager loading with Include
-                return _appDbContext.Upvotes.Where(s => s.UserId.Contains(reportId));
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-
-
-
-
-        public InvestigationListViewModel GetInvestigationListViewModel()
-        {
-            IEnumerable<Investigation> AllInvestigations = GetAllInvestigations();
-            return new InvestigationListViewModel
-            {
-                TotalEntries = AllInvestigations.Count(),
-                Investigations = GetAllInvestigationsViewModel(AllInvestigations)
-            };
-        }
-
-        public InvestigationListViewModel GetInvestigationListViewModel(string userId)
+        public InvestigationListViewModel GetInvestigationListViewModel(string userId)  // return InvestigationListViewModel for UserID
         {
             IEnumerable<Investigation> AllInvestigations = GetAllInvestigations(userId);
             return new InvestigationListViewModel
@@ -580,7 +459,7 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        public IEnumerable<InvestigationViewModel> GetAllInvestigationsViewModel(IEnumerable<Investigation> investigations)
+        public IEnumerable<InvestigationViewModel> GetAllInvestigationsViewModel(IEnumerable<Investigation> investigations) // changes List of Investigation to a list of InvestigationViewModel
         {
             List < InvestigationViewModel > ListInvestigationViewModel = new List<InvestigationViewModel> { };
 
@@ -592,7 +471,8 @@ namespace Nemesys.Models.Repositories
             return ListInvestigationViewModel;
         }
 
-        public InvestigationViewModel GetInvestigationViewModel(Investigation investigation, Report report)
+
+        public InvestigationViewModel GetInvestigationViewModel(Investigation investigation, Report report) // return InvestigationViewModel
         {
             return new InvestigationViewModel
             {
@@ -605,17 +485,19 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        public  InvestigationViewModel GetInvestigationViewModel(int id)
+
+        public  InvestigationViewModel GetInvestigationViewModel(int id)  // return InvestigationeViewModel with id
         {
             InvestigationViewModel invVM = GetInvestigationViewModel( GetInvestigationById(id) );
-            invVM.Report = GetReportViewModelById(invVM.Report.Id);
+
+            invVM.Report = GetReportViewModel(GetReportById(invVM.Report.Id));
             return invVM;
         }
 
 
 
 
-        public InvestigationViewModel GetInvestigationViewModel(Investigation investigation)
+        public InvestigationViewModel GetInvestigationViewModel(Investigation investigation)  // transform Investigation into InvestigatioViewModel
         {
             return new InvestigationViewModel
             {
@@ -633,7 +515,7 @@ namespace Nemesys.Models.Repositories
 
 
 
-        public Investigation GetInvestigationById(int investigationId)
+        public Investigation GetInvestigationById(int investigationId)  // return INvestigation with the id 
         {
             try
             {
@@ -650,7 +532,7 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        public Investigation GetInvestigationByReportId(int reportId)
+        public Investigation GetInvestigationByReportId(int reportId)  // return INvestigation with the reportId
         {
             try
             {
@@ -670,7 +552,7 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public bool InvestigationForReportIdExist(int reportId)
+        public bool InvestigationForReportIdExist(int reportId) // tell if there is an investigation or not with the reportId
         {
             //Using Eager loading with Include
             Investigation investigation = _appDbContext.Investigations.Include(b => b.User).FirstOrDefault(p => p.ReportId == reportId);
@@ -683,20 +565,28 @@ namespace Nemesys.Models.Repositories
         }
 
 
-        public Investigation EditInvestigationViewModelToInvestigation(EditInvestigationViewModel editInvVM)
+        public Investigation EditInvestigationViewModelToInvestigation(EditInvestigationViewModel editInvVM) // transform EditInvestigation in an Investigation 
         {
+            string investigatorInfo = "Mail: " + editInvVM.Author.Mail;
+            
+            if (!editInvVM.Author.Mail.Equals(editInvVM.Author.Alias) && (editInvVM.Author.Alias != null))
+                investigatorInfo += " | Alias: " + editInvVM.Author.Alias;
+            if (editInvVM.Author.PhoneNumber != null)
+                investigatorInfo += " | Phone number: " + editInvVM.Author.PhoneNumber;
+
+
             return new Investigation
             {
                 DateOfAction = editInvVM.DateOfAction,
                 Description = editInvVM.Description,
-                InvestigatorDetails = editInvVM.Author.Name,
+                InvestigatorDetails = investigatorInfo,
                 ReportId = editInvVM.Report.Id,
                 StatusId = editInvVM.StatusId,
                 UserId = editInvVM.Author.Id
             };
         }
 
-        public void CreateNewInvestigation(EditInvestigationViewModel editInvVM)
+        public void CreateNewInvestigation(EditInvestigationViewModel editInvVM) // create a new investigation
         {
             CreateInvestigation((EditInvestigationViewModelToInvestigation(editInvVM)));
         }
@@ -707,12 +597,12 @@ namespace Nemesys.Models.Repositories
          * 
          * dbo.Investigations UPDATES
          * 
-         */
-        public void CreateInvestigation(Investigation investigation)
+         */        
+        public void CreateInvestigation(Investigation investigation)  // create a new investigation
         {
             try
             {
-                if (InvestigationForReportIdExist(investigation.ReportId) == false)
+                if (InvestigationForReportIdExist(investigation.ReportId) == false) // if there isnt any investigation on the report
                 {
                     _appDbContext.Investigations.Add(investigation);
 
@@ -733,7 +623,7 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public void UpdateInvestigation(Investigation updatedInvestigation)
+        public void UpdateInvestigation(Investigation updatedInvestigation)  // Update the investigation
         {
             try
             {
@@ -765,7 +655,7 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public async Task DeleteInvestation(Investigation investigation)
+        public async Task DeleteInvestation(Investigation investigation)  // Delete the investigation
         {
             _appDbContext.Investigations.Remove(investigation);
             await _appDbContext.SaveChangesAsync();
@@ -792,7 +682,7 @@ namespace Nemesys.Models.Repositories
          *
          *
          */
-        public StatusViewModel GetStatusViewModel(Status status)
+        public StatusViewModel GetStatusViewModel(Status status) // transform status in statusViewModel
         {
             return new StatusViewModel
             {
@@ -806,7 +696,7 @@ namespace Nemesys.Models.Repositories
          * dbo.Status access
          * 
          */
-        public IEnumerable<Status> GetAllStatus()
+        public IEnumerable<Status> GetAllStatus()  // return all status
         {
             try
             {
@@ -820,11 +710,22 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public Status GetStatusById(int statusId)
+        
+
+        public IEnumerable<string> GetAllStatusString() // return the status in a String list 
         {
             try
             {
-                return _appDbContext.Status.FirstOrDefault(c => c.Id == statusId);
+                //Not loading related report
+
+                var AllStatus = _appDbContext.Status;
+                List<string> listStatus = new List<string> { };
+
+                foreach (var Status in AllStatus)
+                {
+                    listStatus.Add(Status.Name);
+                }
+                return listStatus;
             }
             catch (Exception ex)
             {
@@ -848,7 +749,7 @@ namespace Nemesys.Models.Repositories
          * 
          * 
          */
-        public TypeOfHazardViewModel GetTypeOfHazardViewModel(TypeOfHazard typeOfHazard)
+        public TypeOfHazardViewModel GetTypeOfHazardViewModel(TypeOfHazard typeOfHazard)  // transform TypeOfHazard in TypeOfHazardViewModel 
         {
             return new TypeOfHazardViewModel
             {
@@ -862,7 +763,7 @@ namespace Nemesys.Models.Repositories
          * dbo.TypeOfHazard access
          * 
          */
-        public IEnumerable<TypeOfHazard> GetAllTypesOfHazard()
+        public IEnumerable<TypeOfHazard> GetAllTypesOfHazard()  // return all the TypeOfHazard
         {
             try
             {
@@ -876,12 +777,20 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public TypeOfHazard GetTypeOfHazardById(int typeOfHazardId)
+        public IEnumerable<string> GetAllTypesOfHazardString()  // return all the type of hazard in string 
         {
             try
             {
-                //Not loading related blog posts
-                return _appDbContext.TypeOfHazard.FirstOrDefault(c => c.Id == typeOfHazardId);
+                //Not loading related report
+
+                var ToH = _appDbContext.TypeOfHazard;
+                List<string> listType = new List<string> { };
+
+                foreach ( var Type in ToH)
+                {
+                    listType.Add(Type.Name);
+                }
+                return listType;
             }
             catch (Exception ex)
             {
@@ -890,7 +799,7 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-
+        
 
 
         /*
@@ -898,146 +807,15 @@ namespace Nemesys.Models.Repositories
          * AuthorViewModel
          * 
          */
-        public AuthorViewModel GetAuthorViewModel(string  UserId)
+        public AuthorViewModel GetAuthorViewModel(string UserId)  // return the Authorview model 
         {
             return new AuthorViewModel
             {
                 Id = UserId,
-                Name = _appDbContext.Users.FirstOrDefault(c => c.Id == UserId).UserName
+                Mail = _appDbContext.Users.FirstOrDefault(c => c.Id == UserId).UserName,
+                Alias = _appDbContext.Users.FirstOrDefault(c => c.Id == UserId).AuthorAlias,
+                PhoneNumber = _appDbContext.Users.FirstOrDefault(c => c.Id == UserId).PhoneNumber
             };
         }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        /*
-         * 
-         * 
-         * 
-         * 
-         * BLOGGY
-         * 
-         * 
-         * 
-         */
-
-        public IEnumerable<Category> GetAllCategories()
-        {
-            try
-            {
-                //Not loading related blog posts
-                return _appDbContext.Categories;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-        public Category GetCategoryById(int categoryId)
-        {
-            try
-            {
-                //Not loading related blog posts
-                return _appDbContext.Categories.FirstOrDefault(c => c.Id == categoryId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-
-
-        public IEnumerable<BlogPost> GetAllBlogPosts()
-        {
-            try
-            {
-                //Using Eager loading with Include
-                return _appDbContext.BlogPosts.Include(b => b.Category).OrderBy(b => b.CreatedDate);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-        public BlogPost GetBlogPostById(int blogPostId)
-        {
-            try
-            {
-                //Using Eager loading with Include
-                return _appDbContext.BlogPosts.Include(b => b.Category).Include(b => b.User).FirstOrDefault(p => p.Id == blogPostId);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-        public void CreateBlogPost(BlogPost blogPost)
-        {
-            try
-            {
-                _appDbContext.BlogPosts.Add(blogPost);
-                _appDbContext.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
-        public void UpdateBlogPost(BlogPost blogPost)
-        {
-            try
-            {
-                var existingBlogPost = _appDbContext.BlogPosts.SingleOrDefault(bp => bp.Id == blogPost.Id);
-                if (existingBlogPost != null)
-                {
-                    existingBlogPost.Title = blogPost.Title;
-                    existingBlogPost.Content = blogPost.Content;
-                    existingBlogPost.UpdatedDate = blogPost.UpdatedDate;
-                    existingBlogPost.ImageUrl = blogPost.ImageUrl;
-                    existingBlogPost.CategoryId = blogPost.CategoryId;
-                    existingBlogPost.UserId = blogPost.UserId;
-
-                    _appDbContext.Entry(existingBlogPost).State = EntityState.Modified;
-                    _appDbContext.SaveChanges();
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex.Message);
-                throw;
-            }
-        }
-
     }
 }

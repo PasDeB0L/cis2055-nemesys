@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Nemesys.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
@@ -30,24 +26,6 @@ namespace Nemesys
                     DbInitializer.SeedRoles(roleManager);
                     DbInitializer.SeedUsers(userManager);
                     DbInitializer.SeedData(userManager, context);
-
-                    /*
-                    var user = userManager.GetUsersInRoleAsync("User").Result.FirstOrDefault();
-
-                    context.AddRange
-                    (
-                        new Investigation()
-                        {
-                            DateOfAction = DateTime.UtcNow,
-                            Description = "investion test",
-                            InvestigatorDetails = user.Email,
-                            StatusId = 4,
-                            ReportId = 3,
-                            UserId = user.Id
-                        }
-                    );
-                    context.SaveChanges();*/
-
                 }
                 catch (Exception ex)
                 {
@@ -56,7 +34,6 @@ namespace Nemesys
                 }
             }
             host.Run();
-
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>

@@ -21,24 +21,18 @@ namespace Nemesys.Models
 
 
 
-
-        //Foreign Key - navigation property name + key property name
-        //public int InvestationId { get; set; }
-        
-
-
-        //Foreign Key - navigation property name + key property name
+        //Foreign Key - Status 
         public int StatusId { get; set; }
-        //Reference navigation property
+        //Reference navigation status
         public Status Status { get; set; }
         public int TypeOfHazardId { get; set; }
-        //Reference navigation property
+        //Reference navigation type
         public TypeOfHazard TypeOfHazard { get; set; }
 
 
-        //Foreign Key - navigation property name + key property name
+        //Foreign Key - User
         public string UserId { get; set; }
-        //Reference navigation property
+        //Reference navigation user
         public ApplicationUser User { get; set; }
     }
 }

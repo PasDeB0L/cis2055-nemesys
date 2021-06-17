@@ -9,13 +9,14 @@ namespace Nemesys.Models
     {
         public int Id { get; set; }
 
-
+        //Foreign Key - Report 
         public int ReportId { get; set; }
-        //Reference navigation property
+        //Reference navigation Report
         public Report Report { get; set; }
 
+        //Foreign Key - User 
         public string UserId { get; set; }
-        //Reference navigation property
+        //Reference navigation User
         public ApplicationUser User { get; set; }
     }
 }

@@ -222,61 +222,6 @@ namespace Nemesys.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Nemesys.Models.BlogPost", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Content")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("ReadCount")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Title")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("UpdatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("UserId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CategoryId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("BlogPosts");
-                });
-
-            modelBuilder.Entity("Nemesys.Models.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
             modelBuilder.Entity("Nemesys.Models.Investigation", b =>
                 {
                     b.Property<int>("Id")
@@ -465,23 +410,6 @@ namespace Nemesys.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Nemesys.Models.BlogPost", b =>
-                {
-                    b.HasOne("Nemesys.Models.Category", "Category")
-                        .WithMany("BlogPosts")
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Nemesys.Models.ApplicationUser", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId");
-
-                    b.Navigation("Category");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("Nemesys.Models.Investigation", b =>
                 {
                     b.HasOne("Nemesys.Models.Report", "Report")
@@ -502,13 +430,13 @@ namespace Nemesys.Migrations
             modelBuilder.Entity("Nemesys.Models.Report", b =>
                 {
                     b.HasOne("Nemesys.Models.Status", "Status")
-                        .WithMany("Reports")
+                        .WithMany()
                         .HasForeignKey("StatusId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Nemesys.Models.TypeOfHazard", "TypeOfHazard")
-                        .WithMany("Reports")
+                        .WithMany()
                         .HasForeignKey("TypeOfHazardId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -539,21 +467,6 @@ namespace Nemesys.Migrations
                     b.Navigation("Report");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("Nemesys.Models.Category", b =>
-                {
-                    b.Navigation("BlogPosts");
-                });
-
-            modelBuilder.Entity("Nemesys.Models.Status", b =>
-                {
-                    b.Navigation("Reports");
-                });
-
-            modelBuilder.Entity("Nemesys.Models.TypeOfHazard", b =>
-                {
-                    b.Navigation("Reports");
                 });
 #pragma warning restore 612, 618
         }

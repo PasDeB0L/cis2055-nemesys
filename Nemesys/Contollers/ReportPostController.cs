@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -11,6 +12,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 
 namespace Nemesys.Contollers
@@ -41,16 +43,58 @@ namespace Nemesys.Contollers
 
         private Task<ApplicationUser> GetCurrentUserAsync() => _userManager.GetUserAsync(HttpContext.User);
 
-
-        public async Task<IActionResult> IndexAsync( )
+        /*
+         * Load all reports first but you can choose with the search bar to only see some reports or have  a ascending order or descending
+         */
+        public async Task<IActionResult> IndexAsync( string searchStatus, string searchTypeOfHazard, string searchUpvote, string searchDate)
         {
             try
             {
                 var currentUser = await _userManager.GetUserAsync(User);
                 
-                var model = _nemesysRepository.GetReportListViewModel( await GetCurrentUserId() );
+                var model = _nemesysRepository.GetReportListViewModel( await GetCurrentUserId() ); 
+
 
                 ViewData["User"] = await GetCurrentUserId();
+
+               
+
+                if (!string.IsNullOrEmpty(searchStatus)) 
+                {
+                    model.Reports = model.Reports.Where(b => b.Status.Name == searchStatus); // we only keep the reports with Status = searchStatus
+                }
+
+                if (!string.IsNullOrEmpty(searchTypeOfHazard))
+                {
+                    model.Reports = model.Reports.Where(b => b.TypeOfHazard.Name == searchTypeOfHazard);  // we only keep the reports with TypeOfHazard = searchTypeOfHazard
+                }
+
+                if (!string.IsNullOrEmpty(searchUpvote)) // sort with ascending or descending  Upvote
+                {
+                    if ( searchUpvote.Equals("Descending"))
+                        model.Reports = model.Reports.OrderByDescending(b => b.Upvotes );  
+                    else
+                        model.Reports = model.Reports.OrderBy(b => b.Upvotes); 
+                }
+
+                if (!string.IsNullOrEmpty(searchDate)) // sort with ascending or descending  date
+                {
+                    if (searchDate.Equals("Descending"))
+                        model.Reports = model.Reports.OrderByDescending(b => b.Date); 
+                    else
+                        model.Reports = model.Reports.OrderBy(b => b.Date); 
+                }
+
+
+                IEnumerable<string> ascdescending = new string[] { "Ascending", "Descending" };
+
+                model.TotalEntries = model.Reports.Count();
+                model.Status = new SelectList(_nemesysRepository.GetAllStatusString());
+                model.TypeOfHzard = new SelectList(_nemesysRepository.GetAllTypesOfHazardString());
+                model.Upvote = new SelectList(ascdescending);
+                model.Date = new SelectList(ascdescending);
+
+
 
                 return View(model);
             }
@@ -87,88 +131,35 @@ namespace Nemesys.Contollers
 
 
 
-        public async Task<IActionResult> Upvotes(int id)
+        public async Task<IActionResult> Upvotes(int id, string searchStatus, string searchTypeOfHazard, string searchUpvote, string searchDate)
         {
-            
-            try
-            {
-                Console.WriteLine("void upvote");
+            //Check if the current user has access to this resource
+            var currentUser = await _userManager.GetUserAsync(User);
 
-                Upvote upvote = new Upvote
+            if ( _nemesysRepository.UserUpvoteReportExist(currentUser.Id, id) )
+            {
+                try
                 {
-                    ReportId = id,
-                    UserId = await GetCurrentUserId()
-                };
-
-                _nemesysRepository.CreateUpvote(upvote);
-
-                
-                
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message, ex.Data);
-            }
-            return RedirectToAction("Index");
-        }
-
-
-
-
-
-
-        public IActionResult Details(int id)
-        {
-            try
-            {
-                var b = _nemesysRepository.GetReportById(id);
-                if (b == null)
-                    return NotFound();
-                else
-                {
-                    var model = new ReportViewModel()
+                    Upvote upvote = new Upvote
                     {
-                        Id = b.Id,
-                        CreatedDate = b.CreatedDate,
-                        Date = b.Date,
-                        Title = b.Title,
-                        Description = b.Description,
-                        Location = b.Location,
-                        ReporterInformations = b.ReporterInformations,
-                        ImageUrl = b.ImageUrl,
-                        Upvotes = b.Upvotes,
-                        
-
-
-                        Status = new StatusViewModel()
-                        {
-                            Id = b.Status.Id,
-                            Name = b.Status.Name
-                        },
-                        TypeOfHazard = new TypeOfHazardViewModel()
-                        {
-                            Id = b.TypeOfHazard.Id,
-                            Name = b.TypeOfHazard.Name
-                        },
-                        /*
-                        Author = new AuthorViewModel()
-                        {
-                            Id = b.UserId,
-                            Name = (_userManager.FindByIdAsync(b.UserId).Result != null) ? _userManager.FindByIdAsync(b.UserId).Result.UserName : "Anonymous"
-                        }
-                        */
-
+                        ReportId = id,
+                        UserId = await GetCurrentUserId()
                     };
 
-                    return View(model);
+                    _nemesysRepository.CreateUpvote(upvote);
+
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, ex.Message, ex.Data);
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, ex.Message, ex.Data);
-                return View("Error");
-            }
+            return RedirectToAction("Index"); // return to Index
         }
+
+
+
+
 
 
 
@@ -205,28 +196,17 @@ namespace Nemesys.Contollers
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         [HttpPost]
         [Authorize]
-        public IActionResult Create([Bind("Title, Description, Location, ImageToUpload, TypeOfHazardId, Date")] EditReportViewModel newReport)
+        public async Task<IActionResult> CreateAsync([Bind("Title, Description, Location, ImageToUpload, TypeOfHazardId, Date")] EditReportViewModel newReport)
         {
             try
             {
                 if (ModelState.IsValid)
                 {
-                    string fileName = "";
-                    if (newReport.ImageToUpload != null)
-                    {
-                        //At this point you should check size, extension etc...
-                        //Then persist using a new name for consistency (e.g. new Guid)
-                        var extension = "." + newReport.ImageToUpload.FileName.Split('.')[newReport.ImageToUpload.FileName.Split('.').Length - 1];
-                        fileName = Guid.NewGuid().ToString() + extension;
-                        var path = Directory.GetCurrentDirectory() + "\\wwwroot\\images\\blogposts\\" + fileName; // report
-                        using (var bits = new FileStream(path, FileMode.Create))
-                        {
-                            newReport.ImageToUpload.CopyTo(bits);
-                        }
-                    }
+                    var currentUser = await _userManager.GetUserAsync(User);
 
+                    newReport.Author = _nemesysRepository.GetAuthorViewModel(currentUser.Id);
 
-                    _nemesysRepository.CreateReport(newReport.Title, newReport.Description, newReport.Location, fileName, newReport.TypeOfHazardId, newReport.StatusId, newReport.Date, _userManager.GetUserId(User), _userManager.GetUserId(User));
+                    _nemesysRepository.CreateReport(newReport);
 
                     return RedirectToAction("Index");
                 }
@@ -373,7 +353,6 @@ namespace Nemesys.Contollers
                 {
                     if (ModelState.IsValid)
                     {
-                        Console.WriteLine("valid");
                         string imageUrl = "";
 
                         if (updatedReport.ImageToUpload != null)
@@ -408,7 +387,6 @@ namespace Nemesys.Contollers
                     }
                     else
                     {
-                        Console.WriteLine("non valide");
                         return Unauthorized();
                     }
                 }
@@ -437,15 +415,16 @@ namespace Nemesys.Contollers
 
 
 
-
+        /*
+         *  show the investigation and the report after you click on the "Investigation" button  
+         */
         [HttpGet]
         public IActionResult Investigation(int id)
         {
             try
             {
+                // get the InvestigationViewModel for the reportId = id
                 var model = _nemesysRepository.GetInvestigationViewModel(_nemesysRepository.GetInvestigationByReportId(id), _nemesysRepository.GetReportById(id));
-                    //_nemesysRepository.GetReportViewModel(_nemesysRepository.GetReportById(id));
-
 
                 return View(model);
             }
@@ -493,12 +472,5 @@ namespace Nemesys.Contollers
             }
         }
 
-
-        
-        
-
-
-
-        
     }
 }
