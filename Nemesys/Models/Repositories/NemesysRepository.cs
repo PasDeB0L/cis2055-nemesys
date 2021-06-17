@@ -189,7 +189,7 @@ namespace Nemesys.Models.Repositories
             }
         }
 
-        public ReportListViewModel GetReportListViewModel(string userId) // return all reports where UserId = userId
+        public ReportListViewModel GetReportListViewModel(string userId) // return ReportListViewModel with all the reports done
         {
             IEnumerable<Report> AllReports = GetAllReports();
 
